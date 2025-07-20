@@ -779,6 +779,48 @@ class MatchRecordUI(QDialog):
         self.new_window.show()
         self.close()
 
+
+class DataVisualizeUI(QDialog):
+    def __init__(self):
+        super().__init__()
+        uic.loadUi("/Users/leeyonggeun/Desktop/Python/FPA/UI/fpa_data_visualize.ui", self)
+        self.setWindowTitle("데이터 시각화")
+
+        self.comboBox_mode.currentTextChanged.connect(self.on_mode_changed)
+
+        # 🖼️ 로고 이미지 삽입
+        self.logo_scene = QGraphicsScene(self)
+        self.logo.setScene(self.logo_scene)
+        self.logo_pixmap = QtGui.QPixmap("/Users/leeyonggeun/Desktop/Python/FPA/assets/logo.png")
+        self.logo_item = QGraphicsPixmapItem(self.logo_pixmap)
+        self.logo_scene.addItem(self.logo_item)
+        self.logo.setSceneRect(QRectF(self.logo_pixmap.rect()))
+
+    def on_mode_changed(self, mode_text):
+        if mode_text == "데이터 시각화":
+            return  # 현재 화면이니까 이동 안 함
+
+        reply = QMessageBox.question(
+            self, "모드 이동 확인",
+            f"'{mode_text}' 모드로 이동하시겠습니까?",
+            QMessageBox.Yes | QMessageBox.No
+        )
+
+        if reply == QMessageBox.Yes:
+            self.move_to_mode(mode_text)
+
+    def move_to_mode(self, mode):
+        if mode == "경기 정보":
+            self.new_window = MatchInfoUI()
+        elif mode == "데이터 수집":
+            self.new_window = DataLogUI()
+        else:
+            return
+
+        self.new_window.show()
+        self.close()
+
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
 
