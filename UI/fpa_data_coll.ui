@@ -230,13 +230,16 @@ QComboBox::drop-down {
    <property name="text">
     <string/>
    </property>
+   <property name="readOnly">
+    <bool>true</bool>
+   </property>
   </widget>
   <widget class="QLineEdit" name="lineEdit_timeline">
    <property name="geometry">
     <rect>
      <x>890</x>
      <y>620</y>
-     <width>451</width>
+     <width>251</width>
      <height>31</height>
     </rect>
    </property>
@@ -244,6 +247,15 @@ QComboBox::drop-down {
     <font>
      <pointsize>15</pointsize>
     </font>
+   </property>
+   <property name="text">
+    <string>0</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="readOnly">
+    <bool>true</bool>
    </property>
   </widget>
   <widget class="QLineEdit" name="lineEdit_datainput">
@@ -265,7 +277,7 @@ QComboBox::drop-down {
    <property name="geometry">
     <rect>
      <x>740</x>
-     <y>150</y>
+     <y>90</y>
      <width>600</width>
      <height>386</height>
     </rect>
@@ -358,7 +370,7 @@ QComboBox::drop-down {
    <property name="geometry">
     <rect>
      <x>740</x>
-     <y>110</y>
+     <y>50</y>
      <width>111</width>
      <height>31</height>
     </rect>
@@ -542,6 +554,182 @@ QComboBox::drop-down {
    </property>
    <property name="text">
     <string>Mode</string>
+   </property>
+  </widget>
+  <widget class="QRadioButton" name="radioButton_1sthalf">
+   <property name="geometry">
+    <rect>
+     <x>810</x>
+     <y>500</y>
+     <width>71</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>1st Half</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_plus">
+   <property name="geometry">
+    <rect>
+     <x>1160</x>
+     <y>620</y>
+     <width>81</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>+</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_minus">
+   <property name="geometry">
+    <rect>
+     <x>1260</x>
+     <y>620</y>
+     <width>81</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>-</string>
+   </property>
+  </widget>
+  <widget class="QRadioButton" name="radioButton_2ndhalf">
+   <property name="geometry">
+    <rect>
+     <x>810</x>
+     <y>530</y>
+     <width>71</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>2nd Half</string>
+   </property>
+  </widget>
+  <widget class="QRadioButton" name="radioButton_home">
+   <property name="geometry">
+    <rect>
+     <x>990</x>
+     <y>500</y>
+     <width>61</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Home</string>
+   </property>
+  </widget>
+  <widget class="QRadioButton" name="radioButton_away">
+   <property name="geometry">
+    <rect>
+     <x>990</x>
+     <y>530</y>
+     <width>61</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Away</string>
+   </property>
+  </widget>
+  <widget class="QRadioButton" name="radioButton_left">
+   <property name="geometry">
+    <rect>
+     <x>1170</x>
+     <y>530</y>
+     <width>81</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</string>
+   </property>
+  </widget>
+  <widget class="QRadioButton" name="radioButton_right">
+   <property name="geometry">
+    <rect>
+     <x>1080</x>
+     <y>530</y>
+     <width>81</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_half">
+   <property name="geometry">
+    <rect>
+     <x>750</x>
+     <y>510</y>
+     <width>41</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Pretendard</family>
+     <pointsize>18</pointsize>
+     <weight>50</weight>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Half</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_team">
+   <property name="geometry">
+    <rect>
+     <x>920</x>
+     <y>510</y>
+     <width>61</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Pretendard</family>
+     <pointsize>18</pointsize>
+     <weight>50</weight>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Team</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_attackdirection">
+   <property name="geometry">
+    <rect>
+     <x>1080</x>
+     <y>501</y>
+     <width>171</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Pretendard</family>
+     <pointsize>18</pointsize>
+     <weight>50</weight>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Attack Direction</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
    </property>
   </widget>
  </widget>

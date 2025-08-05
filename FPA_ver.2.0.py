@@ -5,7 +5,7 @@ import ctypes
 from PyQt5 import uic, QtGui, QtCore
 from PyQt5.QtWidgets import (
     QApplication, QDialog, QFileDialog, QMessageBox,
-    QGraphicsScene, QGraphicsPixmapItem, QLineEdit, QTableWidgetItem, QTableWidget, QLabel
+    QGraphicsScene, QGraphicsPixmapItem, QLineEdit, QTableWidgetItem, QTableWidget, QLabel, QButtonGroup
 )
 from PyQt5.QtCore import QTime, QRectF, Qt
 from PyQt5.QtGui import QColor, QFont, QPixmap
@@ -66,6 +66,17 @@ class DataLogUI(QDialog):
         self.pushButton_export.clicked.connect(self.export_log)
         self.pushButton_uploaddata.clicked.connect(self.upload_data)
         self.comboBox_mode.currentTextChanged.connect(self.on_mode_changed)
+        self.setup_radio_groups()
+
+        # timeline 분 단위 카운터
+        self.minute_counter = 1  # 기본값 1분
+        self.update_timeline_display()
+
+        self.lineEdit_timeline.setReadOnly(True)
+
+        # 버튼 이벤트 연결
+        self.pushButton_plus.clicked.connect(self.increment_minute)
+        self.pushButton_minus.clicked.connect(self.decrement_minute)
 
 
         # ⌨️ 입력창에서 스패이스바 → 스탯 기록
@@ -73,6 +84,40 @@ class DataLogUI(QDialog):
 
         # ⌫ 백스페이스로 도트 삭제
         self.installEventFilter(self)
+
+    def update_timeline_display(self):
+        # 항상 MM:00 형식으로 표시
+        mm = str(self.minute_counter).zfill(2)
+        self.lineEdit_timeline.setText(f"{mm}:00")
+
+    def increment_minute(self):
+        self.minute_counter += 1
+        self.update_timeline_display()
+
+    def decrement_minute(self):
+        if self.minute_counter > 0:
+            self.minute_counter -= 1
+        self.update_timeline_display()
+
+
+    def setup_radio_groups(self):
+        # Half 그룹
+        self.half_group = QButtonGroup(self)
+        self.half_group.addButton(self.radioButton_1sthalf)
+        self.half_group.addButton(self.radioButton_2ndhalf)
+        self.half_group.setExclusive(True)
+
+        # Team 그룹
+        self.team_group = QButtonGroup(self)
+        self.team_group.addButton(self.radioButton_home)
+        self.team_group.addButton(self.radioButton_away)
+        self.team_group.setExclusive(True)
+
+        # Attack Direction 그룹
+        self.direction_group = QButtonGroup(self)
+        self.direction_group.addButton(self.radioButton_right)
+        self.direction_group.addButton(self.radioButton_left)
+        self.direction_group.setExclusive(True)
 
     def on_mode_changed(self, mode_text):
         if mode_text == "데이터 수집":
@@ -99,7 +144,9 @@ class DataLogUI(QDialog):
         self.close()
 
     def upload_data(self):
-        file_path, _ = QFileDialog.getOpenFileName(self, "Upload Data", "", "CSV Files (*.csv);;Excel Files (*.xlsx)")
+        file_path, _ = QFileDialog.getOpenFileName(
+            self, "Upload Data", "", "CSV Files (*.csv);;Excel Files (*.xlsx)"
+        )
         if not file_path:
             return
 
@@ -112,29 +159,40 @@ class DataLogUI(QDialog):
                 QMessageBox.warning(self, "Unsupported", "지원되지 않는 파일 형식입니다.")
                 return
 
-            required_columns = {'Time', 'StartX', 'StartY', 'Player', 'Action'}
+            required_columns = {
+                'Half', 'Team', 'Direction', 'Time',
+                'Player', 'Receiver', 'Action',
+                'StartX', 'StartY', 'EndX', 'EndY'
+            }
             if not required_columns.issubset(df.columns):
-                QMessageBox.critical(self, "형식 오류", "파일에 필요한 컬럼이 없습니다:\nTime, StartX, StartY, Player, Action")
+                QMessageBox.critical(
+                    self, "형식 오류",
+                    "파일에 필요한 컬럼이 없습니다:\nHalf, Team, Direction, Time, Player, Receiver, Action, StartX, StartY, EndX, EndY"
+                )
                 return
 
             self.listWidget.clear()
             for _, row in df.iterrows():
-                # NaN 제거 및 정제
+                half = str(row.get('Half', '')).strip()
+                team = str(row.get('Team', '')).strip()
+                direction = str(row.get('Direction', '')).strip()
                 time = str(row.get('Time', '')).strip()
+
+                player_raw = row.get('Player', '')
+                receiver_raw = row.get('Receiver', '')
+                action = str(row.get('Action', '')).strip()
+
                 start_x = str(row.get('StartX', '')).strip()
                 start_y = str(row.get('StartY', '')).strip()
-                player_raw = row.get('Player', '')
-                action = str(row.get('Action', '')).strip()
                 end_x = str(row.get('EndX', '')).strip()
                 end_y = str(row.get('EndY', '')).strip()
-                receiver_raw = row.get('Receiver', '') if 'Receiver' in df.columns else ''
 
-                # 선수 번호를 정수형으로 처리
+                # 숫자 변환
                 player = str(int(player_raw)) if pd.notna(player_raw) and str(player_raw).strip() != '' else ''
                 receiver = str(int(receiver_raw)) if pd.notna(receiver_raw) and str(receiver_raw).strip() != '' else ''
 
                 # 로그 문자열 구성
-                log = f"{time} | Pos({start_x}, {start_y})"
+                log = f"{half} | {team} | {direction} | {time} | Pos({start_x}, {start_y})"
                 if player or action:
                     log += f" | {player} {action}"
                 if receiver:
@@ -145,14 +203,6 @@ class DataLogUI(QDialog):
                     log += f" | Pos({end_x}, {end_y})"
 
                 self.listWidget.addItem(log)
-
-        except Exception as e:
-            QMessageBox.critical(self, "Error", f"파일을 불러오는 중 오류 발생: {str(e)}")
-
-
-        except Exception as e:
-            QMessageBox.critical(self, "Error", f"파일을 불러오는 중 오류 발생: {str(e)}")
-
 
         except Exception as e:
             QMessageBox.critical(self, "Error", f"파일을 불러오는 중 오류 발생: {str(e)}")
@@ -196,38 +246,47 @@ class DataLogUI(QDialog):
         if not file_path:
             return
 
-        logs = []
-        for i in range(self.listWidget.count()):
-            logs.append(self.listWidget.item(i).text())
+        logs = [self.listWidget.item(i).text() for i in range(self.listWidget.count())]
 
-        # 로그 파싱
         parsed_logs = []
         for log in logs:
-            # A타입: [time] | Pos(x1, y1) | num1 Action to num2 | Pos(x2, y2)
-            a_match = re.match(r"(.+?) \| Pos\((.+?), (.+?)\) \| (\d+) (.+?) to (\d+) \| Pos\((.+?), (.+?)\)", log)
+            # A타입: Half | Team | Direction | Time | Pos(x1, y1) | num1 Action to num2 | Pos(x2, y2)
+            a_match = re.match(
+                r"(.+?) \| (.+?) \| (.+?) \| (.+?) \| Pos\((.+?), (.+?)\) \| (\d+) (.+?) to (\d+) \| Pos\((.+?), (.+?)\)",
+                log
+            )
             if a_match:
                 parsed_logs.append({
-                    "Time": a_match.group(1),
-                    "StartX": a_match.group(2),
-                    "StartY": a_match.group(3),
-                    "Player": a_match.group(4),
-                    "Action": a_match.group(5),
-                    "Receiver": a_match.group(6),  # 받는 선수 번호 추가
-                    "EndX": a_match.group(7),
-                    "EndY": a_match.group(8),
+                    "Half": a_match.group(1).strip(),
+                    "Team": a_match.group(2).strip(),
+                    "Direction": a_match.group(3).strip(),
+                    "Time": a_match.group(4).strip(),
+                    "Player": a_match.group(7).strip(),
+                    "Receiver": a_match.group(9).strip(),
+                    "Action": a_match.group(8).strip(),
+                    "StartX": a_match.group(5).strip(),
+                    "StartY": a_match.group(6).strip(),
+                    "EndX": a_match.group(10).strip(),
+                    "EndY": a_match.group(11).strip(),
                 })
                 continue
 
-            # B타입: [time] | Pos(x, y) | num1 Action to N/A
-            b_match = re.match(r"(.+?) \| Pos\((.+?), (.+?)\) \| (\d+) (.+?) to N/A", log)
+            # B타입: Half | Team | Direction | Time | Pos(x, y) | num1 Action to N/A
+            b_match = re.match(
+                r"(.+?) \| (.+?) \| (.+?) \| (.+?) \| Pos\((.+?), (.+?)\) \| (\d+) (.+?) to N/A",
+                log
+            )
             if b_match:
                 parsed_logs.append({
-                    "Time": b_match.group(1),
-                    "StartX": b_match.group(2),
-                    "StartY": b_match.group(3),
-                    "Player": b_match.group(4),
-                    "Action": b_match.group(5),
-                    "Receiver": "",  # B타입은 받는 선수 없음
+                    "Half": b_match.group(1).strip(),
+                    "Team": b_match.group(2).strip(),
+                    "Direction": b_match.group(3).strip(),
+                    "Time": b_match.group(4).strip(),
+                    "Player": b_match.group(7).strip(),
+                    "Action": b_match.group(8).strip(),
+                    "StartX": b_match.group(5).strip(),
+                    "StartY": b_match.group(6).strip(),
+                    "Receiver": "",
                     "EndX": "",
                     "EndY": "",
                 })
@@ -250,6 +309,7 @@ class DataLogUI(QDialog):
         time = self.lineEdit_timeline.text().strip()
         stat_input = self.lineEdit_datainput.text().strip()
 
+        # ✅ timeline이 비어있을 때만 시스템 시간 채우기
         if not time:
             time = QTime.currentTime().toString("HH:mm:ss")
             self.lineEdit_timeline.setText(time)
@@ -257,6 +317,11 @@ class DataLogUI(QDialog):
         if not stat_input:
             QMessageBox.warning(self, "입력 누락", "스탯 입력(등번호, 코드 등)을 작성해주세요.")
             return
+
+        match_info = self.get_match_info()  # ✅ Half / Team / Direction 가져오기
+        half = "1st" if match_info["Half"] == "1st Half" else "2nd"
+        team = match_info["Team"].lower()  # "Home" → "home"
+        direction = match_info["Direction"].lower()
 
         # 스탯 사전
         actions_A = {
@@ -291,17 +356,15 @@ class DataLogUI(QDialog):
             'm': 'Miss'
         }
 
+
         all_actions = {**actions_A, **actions_B}
 
-        # 길이가 긴 단축어부터 검사
         for key in sorted(all_actions.keys(), key=len, reverse=True):
-            # 정규표현식 매칭 시도: A타입은 숫자 + key + 숫자, B타입은 숫자 + key
             match = re.fullmatch(rf"(\d+){key}(\d*)", stat_input)
             if match:
                 action = all_actions[key]
 
-                # A타입 처리
-                if key in actions_A:
+                if key in actions_A:  # A타입
                     if not match.group(2):
                         QMessageBox.warning(self, "입력 오류", "A타입 스탯은 '플레이어번호 + 코드 + 플레이어번호' 형식이어야 합니다.")
                         return
@@ -324,10 +387,9 @@ class DataLogUI(QDialog):
                     end_x = round(end_dot.x() * self.FIELD_WIDTH / self.PIXEL_WIDTH, 2)
                     end_y = round((self.PIXEL_HEIGHT - end_dot.y()) * self.FIELD_HEIGHT / self.PIXEL_HEIGHT, 2)
 
-                    log_text = f"{time} | Pos({start_x}, {start_y}) | {player_from} {action} to {player_to} | Pos({end_x}, {end_y})"
+                    log_text = f"{half} | {team} | {direction} | {time} | Pos({start_x}, {start_y}) | {player_from} {action} to {player_to} | Pos({end_x}, {end_y})"
 
-                # B타입 처리
-                else:
+                else:  # B타입
                     try:
                         player_from = int(match.group(1))
                     except ValueError:
@@ -342,9 +404,9 @@ class DataLogUI(QDialog):
                     x = round(dot.x() * self.FIELD_WIDTH / self.PIXEL_WIDTH, 2)
                     y = round((self.PIXEL_HEIGHT - dot.y()) * self.FIELD_HEIGHT / self.PIXEL_HEIGHT, 2)
 
-                    log_text = f"{time} | Pos({x}, {y}) | {player_from} {action} to N/A"
+                    log_text = f"{half} | {team} | {direction} | {time} | Pos({x}, {y}) | {player_from} {action} to N/A"
 
-                # ✅ 로그 추가 및 초기화
+                # ✅ 로그 추가
                 self.listWidget.addItem(log_text)
                 for dot in self.dot_items:
                     self.scene.removeItem(dot)
@@ -352,7 +414,6 @@ class DataLogUI(QDialog):
 
                 self.lineEdit_datainput.clear()
                 self.lineEdit_position.clear()
-                self.lineEdit_timeline.setText(QTime.currentTime().toString("HH:mm:ss"))
                 return
 
         # ❌ 매칭 실패 시
@@ -383,6 +444,22 @@ class DataLogUI(QDialog):
                 return True
 
         return super().eventFilter(obj, event)
+
+    def get_match_info(self):
+        # Half
+        half = "1st Half" if self.radioButton_1sthalf.isChecked() else "2nd Half"
+
+        # Team
+        team = "Home" if self.radioButton_home.isChecked() else "Away"
+
+        # Direction
+        direction = "Right" if self.radioButton_right.isChecked() else "Left"
+
+        return {
+            "Half": half,
+            "Team": team,
+            "Direction": direction
+        }
 
 
 class MatchInfoUI(QDialog):
