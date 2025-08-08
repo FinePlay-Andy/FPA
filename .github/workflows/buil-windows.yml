@@ -3,7 +3,7 @@ name: Build macOS .app
 on:
   push:
     tags:
-      - 'v*'
+      - 'v1.0.*'
 
 jobs:
   build-macos:
