@@ -6,10 +6,8 @@ import os
 from PyQt5 import uic, QtGui, QtCore
 from PyQt5.QtWidgets import (
     QApplication, QDialog, QFileDialog, QMessageBox,
-    QGraphicsScene, QGraphicsPixmapItem, QLineEdit, QTableWidgetItem, QTableWidget, QLabel, QButtonGroup
-)
-from PyQt5.QtCore import QTime, QRectF, Qt
-from PyQt5.QtGui import QColor, QFont, QPixmap
+    QGraphicsScene, QGraphicsPixmapItem, QLineEdit, QButtonGroup)
+from PyQt5.QtCore import QTime, QRectF
 
 def resource_path(relative_path):
     """ PyInstaller 실행 또는 개발 환경에서 리소스 경로 찾기 """
@@ -134,16 +132,6 @@ class DataLogUI(QDialog):
         if reply == QMessageBox.Yes:
             self.move_to_mode(mode_text)
 
-    def move_to_mode(self, mode):
-        if mode == "경기 정보":
-            self.new_window = MatchInfoUI()
-        elif mode == "경기 기록":
-            self.new_window = MatchRecordUI()
-        else:
-            return
-
-        self.new_window.show()
-        self.close()
 
     def upload_data(self):
         file_path, _ = QFileDialog.getOpenFileName(
@@ -471,16 +459,6 @@ class DataLogUI(QDialog):
         }
 
 
-    def move_to_mode(self, mode):
-        if mode == "경기 정보":
-            self.new_window = MatchInfoUI()
-        elif mode == "데이터 수집":
-            self.new_window = DataLogUI()
-        else:
-            return
-
-        self.new_window.show()
-        self.close()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
