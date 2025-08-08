@@ -64,11 +64,11 @@ jobs:
       - name: Build .exe using PyInstaller
         run: |
           pyinstaller --noconfirm --onefile --windowed ^
-            --add-data "UI\\fpa_data_coll_exe.ui;UI" ^
-            --add-data "assets\\football_field.png;assets" ^
-            --add-data "assets\\logo.png;assets" ^
-            --add-data "assets\\statguide.png;assets" ^
-            main.py
+          --add-data "UI/fpa_data_coll_exe.ui;UI" ^
+          --add-data "assets/football_field.png;assets" ^
+          --add-data "assets/logo.png;assets" ^
+          --add-data "assets/statguide.png;assets" ^
+          main.py
 
       - name: Upload Windows .exe
         uses: actions/upload-artifact@v4
