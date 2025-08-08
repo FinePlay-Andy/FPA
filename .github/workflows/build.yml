@@ -33,8 +33,13 @@ jobs:
             --add-data "assets/statguide.png:assets" \
             main.py
 
-      - name: Upload macOS .app
+      - name: Zip the .app for distribution
+        run: |
+          cd dist
+          zip -r main.app.zip main.app
+
+      - name: Upload zipped .app
         uses: actions/upload-artifact@v4
         with:
-          name: macOS-app
-          path: dist/main.app
+          name: macOS-app-zip
+          path: dist/main.app.zip
