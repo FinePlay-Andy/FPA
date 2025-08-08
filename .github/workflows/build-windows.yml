@@ -1,0 +1,40 @@
+name: Build Windows .exe
+
+on:
+  push:
+    tags:
+      - 'v1.0.*'
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller
+          pip install -r requirements.txt
+
+      - name: Build .exe using PyInstaller
+        run: |
+          pyinstaller --noconfirm --onefile --windowed ^
+          --add-data "UI/fpa_data_coll_exe.ui;UI" ^
+          --add-data "assets/football_field.png;assets" ^
+          --add-data "assets/logo.png;assets" ^
+          --add-data "assets/statguide.png;assets" ^
+          main.py
+
+      - name: Upload Windows .exe
+        uses: actions/upload-artifact@v3
+        with:
+          name: windows-exe
+          path: dist/*.exe
