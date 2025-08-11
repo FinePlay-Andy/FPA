@@ -9,6 +9,10 @@ jobs:
   build-windows:
     runs-on: windows-latest
 
+    env:
+      PIP_DISABLE_PIP_VERSION_CHECK: 1
+      PYTHONUTF8: 1
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -18,6 +22,14 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: pip-${{ runner.os }}-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            pip-${{ runner.os }}-
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -26,10 +38,10 @@ jobs:
 
       - name: Build .exe using PyInstaller
         run: |
-          pyinstaller --noconfirm --onefile --windowed --collect-all pandas --collect-all PyQt5 --hidden-import openpyxl --add-data "UI/fpa_data_coll_exe.ui;UI" --add-data "assets/football_field.png;assets" --add-data "assets/logo.png;assets" --add-data "assets/statguide.png;assets" main.py
+          pyinstaller --name fpa --icon "assets/fpa_icon.ico" --noconfirm --onefile --windowed --collect-all pandas --collect-all PyQt5 --hidden-import openpyxl --add-data "UI/fpa_data_coll_exe.ui;UI" --add-data "assets/football_field.png;assets" --add-data "assets/logo.png;assets" --add-data "assets/statguide.png;assets" main.py
 
       - name: Upload .exe artifact
         uses: actions/upload-artifact@v4
         with:
-          name: fpa-windows-exe
-          path: dist/main.exe
+          name: fpa-windows-exe-${{ github.ref_name }}
+          path: dist/fpa.exe

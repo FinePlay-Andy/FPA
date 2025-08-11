@@ -3,11 +3,17 @@ import re
 import pandas as pd
 import ctypes
 import os
-from PyQt5 import uic, QtGui, QtCore
+from PyQt5 import uic, QtGui, QtCore, QtWidgets
 from PyQt5.QtWidgets import (
     QApplication, QDialog, QFileDialog, QMessageBox,
     QGraphicsScene, QGraphicsPixmapItem, QLineEdit, QButtonGroup)
 from PyQt5.QtCore import QTime, QRectF
+
+# DPI 인식 + 고해상도 아이콘 사용
+if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
+    QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
+if hasattr(QtCore.Qt, 'AA_UseHighDpiPixmaps'):
+    QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
 
 def resource_path(relative_path):
     """ PyInstaller 실행 또는 개발 환경에서 리소스 경로 찾기 """
@@ -461,7 +467,11 @@ class DataLogUI(QDialog):
 
 
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication(sys.argv)
+    app.setFont(QtGui.QFont("Arial", 10))
+
+    # OS에 관계없이 동일한 폰트 적용
+    app.setFont(QtGui.QFont("Arial", 10))
 
     # ✅ macOS Dock 아이콘 지정
     try:
