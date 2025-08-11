@@ -98,7 +98,7 @@ QComboBox::drop-down {
    </property>
    <property name="font">
     <font>
-     <family>Pretendard</family>
+     <family>.AppleSystemUIFont</family>
      <pointsize>18</pointsize>
     </font>
    </property>
@@ -120,7 +120,7 @@ QComboBox::drop-down {
    </property>
    <property name="font">
     <font>
-     <family>Pretendard</family>
+     <family>.AppleSystemUIFont</family>
      <pointsize>18</pointsize>
     </font>
    </property>
@@ -148,7 +148,7 @@ QComboBox::drop-down {
    </property>
    <property name="font">
     <font>
-     <family>Pretendard</family>
+     <family>.AppleSystemUIFont</family>
      <pointsize>18</pointsize>
     </font>
    </property>
@@ -161,13 +161,13 @@ QComboBox::drop-down {
     <rect>
      <x>750</x>
      <y>570</y>
-     <width>111</width>
+     <width>131</width>
      <height>31</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <family>Pretendard</family>
+     <family>.AppleSystemUIFont</family>
      <pointsize>18</pointsize>
     </font>
    </property>
@@ -180,13 +180,13 @@ QComboBox::drop-down {
     <rect>
      <x>750</x>
      <y>620</y>
-     <width>111</width>
+     <width>141</width>
      <height>31</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <family>Pretendard</family>
+     <family>.AppleSystemUIFont</family>
      <pointsize>18</pointsize>
     </font>
    </property>
@@ -199,13 +199,13 @@ QComboBox::drop-down {
     <rect>
      <x>750</x>
      <y>670</y>
-     <width>111</width>
+     <width>141</width>
      <height>31</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <family>Pretendard</family>
+     <family>.AppleSystemUIFont</family>
      <pointsize>18</pointsize>
     </font>
    </property>
@@ -350,14 +350,14 @@ QComboBox::drop-down {
     <rect>
      <x>40</x>
      <y>110</y>
-     <width>111</width>
+     <width>331</width>
      <height>31</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <family>Pretendard</family>
-     <pointsize>22</pointsize>
+     <family>.AppleSystemUIFont</family>
+     <pointsize>20</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -371,14 +371,14 @@ QComboBox::drop-down {
     <rect>
      <x>740</x>
      <y>50</y>
-     <width>111</width>
+     <width>421</width>
      <height>31</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <family>Pretendard</family>
-     <pointsize>22</pointsize>
+     <family>.AppleSystemUIFont</family>
+     <pointsize>20</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -428,14 +428,14 @@ QComboBox::drop-down {
     <rect>
      <x>40</x>
      <y>420</y>
-     <width>111</width>
+     <width>491</width>
      <height>31</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <family>Pretendard</family>
-     <pointsize>22</pointsize>
+     <family>.AppleSystemUIFont</family>
+     <pointsize>20</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -481,7 +481,7 @@ QComboBox::drop-down {
    </property>
    <property name="font">
     <font>
-     <family>Pretendard</family>
+     <family>.AppleSystemUIFont</family>
      <pointsize>18</pointsize>
     </font>
    </property>
@@ -497,13 +497,13 @@ QComboBox::drop-down {
     <rect>
      <x>480</x>
      <y>50</y>
-     <width>71</width>
+     <width>191</width>
      <height>31</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <family>Pretendard</family>
+     <family>.AppleSystemUIFont</family>
      <pointsize>18</pointsize>
     </font>
    </property>
@@ -619,15 +619,15 @@ QComboBox::drop-down {
    <property name="geometry">
     <rect>
      <x>750</x>
-     <y>510</y>
-     <width>41</width>
-     <height>31</height>
+     <y>500</y>
+     <width>61</width>
+     <height>51</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <family>Pretendard</family>
-     <pointsize>18</pointsize>
+     <family>.AppleSystemUIFont</family>
+     <pointsize>15</pointsize>
      <weight>50</weight>
      <bold>false</bold>
     </font>
@@ -642,16 +642,16 @@ QComboBox::drop-down {
   <widget class="QLabel" name="label_team">
    <property name="geometry">
     <rect>
-     <x>920</x>
-     <y>510</y>
-     <width>61</width>
-     <height>31</height>
+     <x>910</x>
+     <y>500</y>
+     <width>71</width>
+     <height>51</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <family>Pretendard</family>
-     <pointsize>18</pointsize>
+     <family>.AppleSystemUIFont</family>
+     <pointsize>15</pointsize>
      <weight>50</weight>
      <bold>false</bold>
     </font>
@@ -668,14 +668,14 @@ QComboBox::drop-down {
     <rect>
      <x>1080</x>
      <y>501</y>
-     <width>171</width>
+     <width>251</width>
      <height>20</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <family>Pretendard</family>
-     <pointsize>18</pointsize>
+     <family>.AppleSystemUIFont</family>
+     <pointsize>15</pointsize>
      <weight>50</weight>
      <bold>false</bold>
     </font>

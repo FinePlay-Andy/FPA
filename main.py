@@ -470,9 +470,6 @@ if __name__ == "__main__":
     app = QtWidgets.QApplication.instance() or QtWidgets.QApplication(sys.argv)
     app.setFont(QtGui.QFont("Arial", 10))
 
-    # OS에 관계없이 동일한 폰트 적용
-    app.setFont(QtGui.QFont("Arial", 10))
-
     # ✅ macOS Dock 아이콘 지정
     try:
         ctypes.cdll.LoadLibrary('/System/Library/Frameworks/AppKit.framework/AppKit')
