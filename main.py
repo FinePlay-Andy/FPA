@@ -91,6 +91,16 @@ class DataLogUI(QDialog):
         # ⌫ 백스페이스로 도트 삭제
         self.installEventFilter(self)
 
+    def get_id_inputs(self):
+        match_id = self.lineEdit_matchid.text().strip() if hasattr(self, "lineEdit_matchid") else ""
+
+        teamid_h = self.lineEdit_teamid_h.text().strip() if hasattr(self, "lineEdit_teamid_h") else ""
+        # 팀ID Away 라인에딧 이름이 te**a**mid_a 인지 te**am**in_a 인지 둘 다 대응
+        teamid_a_widget = getattr(self, "lineEdit_teamid_a", None) or getattr(self, "lineEdit_teamin_a", None)
+        teamid_a = teamid_a_widget.text().strip() if teamid_a_widget else ""
+
+        return match_id, teamid_h, teamid_a
+
     def update_timeline_display(self):
         # 항상 MM:00 형식으로 표시
         mm = str(self.minute_counter).zfill(2)
@@ -291,9 +301,34 @@ class DataLogUI(QDialog):
         for idx, log in enumerate(parsed_logs, start=1):
             log["No"] = idx
 
-        # ✅ 열 순서 지정
-        columns = ["No", "Half", "Team", "Direction", "Time", "Player", "Receiver", "Action", "StartX", "StartY",
-                   "EndX", "EndY"]
+        # ✅ 여기서 MatchID / TeamID 주입
+        match_id, teamid_h, teamid_a = self.get_id_inputs()
+
+        for log in parsed_logs:
+            # MatchID는 사용자가 입력한 값 그대로
+            log["MatchID"] = match_id
+
+            # TeamID는 Team 값(home/away)에 따라 분기
+            team_val = str(log.get("Team", "")).strip().lower()
+            if team_val == "home":
+                log["TeamID"] = teamid_h
+            elif team_val == "away":
+                log["TeamID"] = teamid_a
+            else:
+                # 혹시 대소문자 섞여 들어오면 보정
+                if "home" in team_val:
+                    log["TeamID"] = teamid_h
+                elif "away" in team_val:
+                    log["TeamID"] = teamid_a
+                else:
+                    log["TeamID"] = ""  # 알 수 없을 때 빈칸
+
+        # ✅ 열 순서 지정 (2열: MatchID, 3열: TeamID)
+        columns = [
+            "No", "MatchID", "TeamID",
+            "Half", "Team", "Direction", "Time",
+            "Player", "Receiver", "Action", "StartX", "StartY", "EndX", "EndY"]
+
         df = pd.DataFrame(parsed_logs)[columns]
 
         try:
