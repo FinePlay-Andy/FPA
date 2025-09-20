@@ -64,10 +64,6 @@ class DataLogUI(QDialog):
         # 🧪 테스트용 더미 로그 (최신 포맷 반영)
         self.listWidget.addItems([
             "1st | home | right | 12:00:01 | Pos(340, 190) | 10 Assist to 7 | Pos(400, 200)",
-            "1st | home | right | 12:00:05 | Pos(220, 130) | 11 Shot On Target to N/A",
-            "1st | home | right | 12:00:10 | Pos(170, 290) | 9 Cross Success to 10 | Pos(250, 150)",
-            "1st | home | right | 12:00:15 | Pos(420, 210) | 8 Dribble to N/A",
-            "1st | home | right | 12:00:20 | Pos(380, 160) | 6 Key Pass to 9 | Pos(460, 180)",
         ])
 
         # 🎯 버튼 이벤트 연결
@@ -375,18 +371,19 @@ class DataLogUI(QDialog):
             'ddd': 'Goal',
             'dd': 'Shot On Target',
             'd': 'Shot',
+            'db': 'Blocked Shot',
             'ee': 'Breakthrough',
             'rr': 'Dribble',
             'bb': 'Duel Win',
             'b': 'Duel Lose',
             'aa': 'Tackle',
             'q': 'Intercept',
-            't': 'Acquisition',
+            'qq': 'Acquisition',
             'w': 'Clear',
-            'e': 'Cutout',
+            'ww': 'Cutout',
             'qw': 'Block',
             'v': 'Catching',
-            'p': 'Punching',
+            'vv': 'Punching',
             'f': 'Foul',
             'ff': 'Be Fouled',
             'o': 'Offside',
