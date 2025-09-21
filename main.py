@@ -53,13 +53,6 @@ class DataLogUI(QDialog):
         self.logo_scene.addItem(self.logo_item)
         self.logo.setSceneRect(QRectF(self.logo_pixmap.rect()))
 
-        # 🖼️ 스탯 가이드 이미지 삽입
-        self.statguide_scene = QGraphicsScene(self)
-        self.statguide.setScene(self.statguide_scene)
-        self.statguide_pixmap = QtGui.QPixmap(resource_path("assets/statguide.png"))
-        self.statguide_item = QGraphicsPixmapItem(self.statguide_pixmap)
-        self.statguide_scene.addItem(self.statguide_item)
-        self.statguide.setSceneRect(QRectF(self.statguide_pixmap.rect()))
 
         # 🧪 테스트용 더미 로그 (최신 포맷 반영)
         self.listWidget.addItems([

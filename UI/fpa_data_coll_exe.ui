@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1391</width>
-    <height>898</height>
+    <width>1224</width>
+    <height>782</height>
    </rect>
   </property>
   <property name="palette">
@@ -87,765 +87,1126 @@ QComboBox::drop-down {
 }
 </string>
   </property>
-  <widget class="QPushButton" name="pushButton_uploaddata">
-   <property name="geometry">
-    <rect>
-     <x>750</x>
-     <y>800</y>
-     <width>281</width>
-     <height>51</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>.AppleSystemUIFont</family>
-     <pointsize>16</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string>Upload Data</string>
-   </property>
-   <property name="checkable">
-    <bool>false</bool>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="pushButton_submitinput">
-   <property name="geometry">
-    <rect>
-     <x>1070</x>
-     <y>740</y>
-     <width>281</width>
-     <height>51</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>.AppleSystemUIFont</family>
-     <pointsize>16</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string>Submit Input</string>
-   </property>
-   <property name="autoDefault">
-    <bool>true</bool>
-   </property>
-   <property name="default">
-    <bool>false</bool>
-   </property>
-   <property name="flat">
-    <bool>false</bool>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="pushButton_savedata">
-   <property name="geometry">
-    <rect>
-     <x>1070</x>
-     <y>800</y>
-     <width>281</width>
-     <height>51</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>.AppleSystemUIFont</family>
-     <pointsize>16</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string>Save Data</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_position">
-   <property name="geometry">
-    <rect>
-     <x>750</x>
-     <y>570</y>
-     <width>131</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>.AppleSystemUIFont</family>
-     <pointsize>16</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string>Position</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_timeline">
-   <property name="geometry">
-    <rect>
-     <x>750</x>
-     <y>620</y>
-     <width>141</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>.AppleSystemUIFont</family>
-     <pointsize>16</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string>Time Line</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_datalinput">
-   <property name="geometry">
-    <rect>
-     <x>750</x>
-     <y>670</y>
-     <width>141</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>.AppleSystemUIFont</family>
-     <pointsize>16</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string>Data Input</string>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="lineEdit_position">
-   <property name="geometry">
-    <rect>
-     <x>890</x>
-     <y>570</y>
-     <width>451</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>15</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-   <property name="readOnly">
-    <bool>true</bool>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="lineEdit_timeline">
-   <property name="geometry">
-    <rect>
-     <x>890</x>
-     <y>620</y>
-     <width>251</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>15</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string>0</string>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignCenter</set>
-   </property>
-   <property name="readOnly">
-    <bool>true</bool>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="lineEdit_datainput">
-   <property name="geometry">
-    <rect>
-     <x>890</x>
-     <y>670</y>
-     <width>451</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>15</pointsize>
-    </font>
-   </property>
-  </widget>
-  <widget class="QGraphicsView" name="footballfield">
-   <property name="geometry">
-    <rect>
-     <x>740</x>
-     <y>90</y>
-     <width>600</width>
-     <height>386</height>
-    </rect>
-   </property>
-   <property name="minimumSize">
-    <size>
-     <width>450</width>
-     <height>290</height>
-    </size>
-   </property>
-   <property name="baseSize">
-    <size>
-     <width>420</width>
-     <height>290</height>
-    </size>
-   </property>
-   <property name="frameShape">
-    <enum>QFrame::NoFrame</enum>
-   </property>
-   <property name="frameShadow">
-    <enum>QFrame::Plain</enum>
-   </property>
-   <property name="lineWidth">
-    <number>0</number>
-   </property>
-  </widget>
-  <widget class="QGraphicsView" name="logo">
-   <property name="geometry">
-    <rect>
-     <x>40</x>
-     <y>30</y>
-     <width>421</width>
-     <height>71</height>
-    </rect>
-   </property>
-   <property name="minimumSize">
-    <size>
-     <width>0</width>
-     <height>0</height>
-    </size>
-   </property>
-   <property name="baseSize">
-    <size>
-     <width>420</width>
-     <height>290</height>
-    </size>
-   </property>
-   <property name="frameShape">
-    <enum>QFrame::NoFrame</enum>
-   </property>
-   <property name="frameShadow">
-    <enum>QFrame::Plain</enum>
-   </property>
-   <property name="lineWidth">
-    <number>0</number>
-   </property>
-  </widget>
-  <widget class="QListWidget" name="listWidget">
-   <property name="geometry">
-    <rect>
-     <x>40</x>
-     <y>150</y>
-     <width>661</width>
-     <height>251</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_datalog">
-   <property name="geometry">
-    <rect>
-     <x>40</x>
-     <y>110</y>
-     <width>331</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>.AppleSystemUIFont</family>
-     <pointsize>18</pointsize>
-     <weight>75</weight>
-     <bold>true</bold>
-    </font>
-   </property>
-   <property name="text">
-    <string>Data Log</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_eventmap">
-   <property name="geometry">
-    <rect>
-     <x>740</x>
-     <y>50</y>
-     <width>221</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>.AppleSystemUIFont</family>
-     <pointsize>18</pointsize>
-     <weight>75</weight>
-     <bold>true</bold>
-    </font>
-   </property>
-   <property name="text">
-    <string>Event Map</string>
-   </property>
-  </widget>
-  <widget class="QGraphicsView" name="statguide">
-   <property name="geometry">
-    <rect>
-     <x>40</x>
-     <y>460</y>
-     <width>661</width>
-     <height>401</height>
-    </rect>
-   </property>
-   <property name="minimumSize">
-    <size>
-     <width>450</width>
-     <height>290</height>
-    </size>
-   </property>
-   <property name="baseSize">
-    <size>
-     <width>420</width>
-     <height>290</height>
-    </size>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">QGraphicsView#statguide {
+  <layout class="QGridLayout" name="gridLayout_5">
+   <item row="4" column="2">
+    <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <item>
+      <widget class="QPushButton" name="pushButton_plus">
+       <property name="text">
+        <string>+</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_minus">
+       <property name="text">
+        <string>-</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="3" column="1" colspan="2">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLabel" name="label_position">
+       <property name="font">
+        <font>
+         <family>.AppleSystemUIFont</family>
+         <pointsize>16</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Position</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="lineEdit_position">
+       <property name="font">
+        <font>
+         <pointsize>15</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="4" column="1">
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QLabel" name="label_timeline">
+       <property name="font">
+        <font>
+         <family>.AppleSystemUIFont</family>
+         <pointsize>16</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Time Line</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="lineEdit_timeline">
+       <property name="font">
+        <font>
+         <pointsize>15</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>0</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="0" column="1" colspan="2">
+    <layout class="QVBoxLayout" name="verticalLayout_7">
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_12">
+       <item>
+        <widget class="QLabel" name="label_eventmap">
+         <property name="font">
+          <font>
+           <family>.AppleSystemUIFont</family>
+           <pointsize>18</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Event Map</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_10">
+         <item>
+          <widget class="QLabel" name="label_matchid">
+           <property name="font">
+            <font>
+             <family>.AppleSystemUIFont</family>
+             <pointsize>15</pointsize>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>MatchID</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="lineEdit_matchid">
+           <property name="font">
+            <font>
+             <pointsize>15</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="readOnly">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_11">
+         <item>
+          <widget class="QLabel" name="label_teamid">
+           <property name="font">
+            <font>
+             <family>.AppleSystemUIFont</family>
+             <pointsize>15</pointsize>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>TeamID</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QGridLayout" name="gridLayout_3">
+           <item row="0" column="1">
+            <widget class="QLineEdit" name="lineEdit_teamid_h">
+             <property name="font">
+              <font>
+               <pointsize>15</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="readOnly">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_teamid_a">
+             <property name="font">
+              <font>
+               <family>.AppleSystemUIFont</family>
+               <pointsize>15</pointsize>
+               <weight>50</weight>
+               <bold>false</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>A</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_teamid_h">
+             <property name="font">
+              <font>
+               <family>.AppleSystemUIFont</family>
+               <pointsize>15</pointsize>
+               <weight>50</weight>
+               <bold>false</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>H</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLineEdit" name="lineEdit_teamin_a">
+             <property name="font">
+              <font>
+               <pointsize>15</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="readOnly">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="QGraphicsView" name="footballfield">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>600</width>
+         <height>360</height>
+        </size>
+       </property>
+       <property name="baseSize">
+        <size>
+         <width>420</width>
+         <height>290</height>
+        </size>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::NoFrame</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="lineWidth">
+        <number>0</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="6" column="1" colspan="2">
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
+      <widget class="QPushButton" name="pushButton_uploadvideo">
+       <property name="font">
+        <font>
+         <family>.AppleSystemUIFont</family>
+         <pointsize>16</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Upload video</string>
+       </property>
+       <property name="flat">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QPushButton" name="pushButton_submitinput">
+       <property name="font">
+        <font>
+         <family>.AppleSystemUIFont</family>
+         <pointsize>16</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Submit Input</string>
+       </property>
+       <property name="autoDefault">
+        <bool>true</bool>
+       </property>
+       <property name="default">
+        <bool>false</bool>
+       </property>
+       <property name="flat">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QPushButton" name="pushButton_uploaddata">
+       <property name="font">
+        <font>
+         <family>.AppleSystemUIFont</family>
+         <pointsize>16</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Upload Data</string>
+       </property>
+       <property name="checkable">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QPushButton" name="pushButton_savedata">
+       <property name="font">
+        <font>
+         <family>.AppleSystemUIFont</family>
+         <pointsize>16</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Save Data</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="0" column="0" rowspan="7">
+    <layout class="QVBoxLayout" name="verticalLayout_9">
+     <item>
+      <layout class="QGridLayout" name="gridLayout_4">
+       <item row="0" column="1">
+        <layout class="QVBoxLayout" name="verticalLayout_8">
+         <item>
+          <widget class="QLabel" name="label_mode">
+           <property name="font">
+            <font>
+             <family>.AppleSystemUIFont</family>
+             <pointsize>16</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Mode</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_9">
+           <item>
+            <widget class="QPushButton" name="pushButton_export">
+             <property name="text">
+              <string>Export</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_delete">
+             <property name="text">
+              <string>Delete</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item row="0" column="0">
+        <widget class="QGraphicsView" name="logo">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>421</width>
+           <height>71</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>421</width>
+           <height>71</height>
+          </size>
+         </property>
+         <property name="baseSize">
+          <size>
+           <width>421</width>
+           <height>71</height>
+          </size>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::NoFrame</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Plain</enum>
+         </property>
+         <property name="lineWidth">
+          <number>0</number>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_6">
+       <item>
+        <widget class="QLabel" name="label_datalog">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <family>.AppleSystemUIFont</family>
+           <pointsize>18</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Data Log</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QListWidget" name="listWidget">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>200</height>
+          </size>
+         </property>
+         <property name="baseSize">
+          <size>
+           <width>584</width>
+           <height>200</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_statguide">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <family>.AppleSystemUIFont</family>
+           <pointsize>18</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Stat Guide</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QFrame" name="frame">
+         <property name="minimumSize">
+          <size>
+           <width>584</width>
+           <height>420</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">#frame {
     border: 2px solid #FF7740;  /* 오렌지색 테두리 */
     border-radius: 12px;        /* 둥근 모서리 */
     padding: 4px;
     background-color: white;    /* 배경 흰색 (선택) */
 }</string>
-   </property>
-   <property name="frameShape">
-    <enum>QFrame::NoFrame</enum>
-   </property>
-   <property name="frameShadow">
-    <enum>QFrame::Plain</enum>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_statguide">
-   <property name="geometry">
-    <rect>
-     <x>40</x>
-     <y>420</y>
-     <width>491</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>.AppleSystemUIFont</family>
-     <pointsize>18</pointsize>
-     <weight>75</weight>
-     <bold>true</bold>
-    </font>
-   </property>
-   <property name="text">
-    <string>Stat Guide</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="pushButton_delete">
-   <property name="geometry">
-    <rect>
-     <x>590</x>
-     <y>110</y>
-     <width>112</width>
-     <height>32</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Delete</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="pushButton_export">
-   <property name="geometry">
-    <rect>
-     <x>470</x>
-     <y>110</y>
-     <width>112</width>
-     <height>32</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Export</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="pushButton_uploadvideo">
-   <property name="geometry">
-    <rect>
-     <x>750</x>
-     <y>740</y>
-     <width>281</width>
-     <height>51</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>.AppleSystemUIFont</family>
-     <pointsize>16</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string>Upload video</string>
-   </property>
-   <property name="flat">
-    <bool>false</bool>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_mode">
-   <property name="geometry">
-    <rect>
-     <x>480</x>
-     <y>50</y>
-     <width>191</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>.AppleSystemUIFont</family>
-     <pointsize>16</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string>Mode</string>
-   </property>
-  </widget>
-  <widget class="QRadioButton" name="radioButton_1sthalf">
-   <property name="geometry">
-    <rect>
-     <x>810</x>
-     <y>500</y>
-     <width>101</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>1st Half</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="pushButton_plus">
-   <property name="geometry">
-    <rect>
-     <x>1160</x>
-     <y>620</y>
-     <width>81</width>
-     <height>32</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>+</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="pushButton_minus">
-   <property name="geometry">
-    <rect>
-     <x>1260</x>
-     <y>620</y>
-     <width>81</width>
-     <height>32</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>-</string>
-   </property>
-  </widget>
-  <widget class="QRadioButton" name="radioButton_2ndhalf">
-   <property name="geometry">
-    <rect>
-     <x>810</x>
-     <y>530</y>
-     <width>101</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>2nd Half</string>
-   </property>
-  </widget>
-  <widget class="QRadioButton" name="radioButton_home">
-   <property name="geometry">
-    <rect>
-     <x>1030</x>
-     <y>500</y>
-     <width>61</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Home</string>
-   </property>
-  </widget>
-  <widget class="QRadioButton" name="radioButton_away">
-   <property name="geometry">
-    <rect>
-     <x>1030</x>
-     <y>530</y>
-     <width>61</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Away</string>
-   </property>
-  </widget>
-  <widget class="QRadioButton" name="radioButton_left">
-   <property name="geometry">
-    <rect>
-     <x>1230</x>
-     <y>530</y>
-     <width>81</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</string>
-   </property>
-  </widget>
-  <widget class="QRadioButton" name="radioButton_right">
-   <property name="geometry">
-    <rect>
-     <x>1130</x>
-     <y>530</y>
-     <width>81</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_half">
-   <property name="geometry">
-    <rect>
-     <x>750</x>
-     <y>500</y>
-     <width>61</width>
-     <height>51</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>.AppleSystemUIFont</family>
-     <pointsize>15</pointsize>
-     <weight>50</weight>
-     <bold>false</bold>
-    </font>
-   </property>
-   <property name="text">
-    <string>Half</string>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_team">
-   <property name="geometry">
-    <rect>
-     <x>930</x>
-     <y>500</y>
-     <width>71</width>
-     <height>51</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>.AppleSystemUIFont</family>
-     <pointsize>15</pointsize>
-     <weight>50</weight>
-     <bold>false</bold>
-    </font>
-   </property>
-   <property name="text">
-    <string>Team</string>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignCenter</set>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_attackdirection">
-   <property name="geometry">
-    <rect>
-     <x>1110</x>
-     <y>501</y>
-     <width>221</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>.AppleSystemUIFont</family>
-     <pointsize>15</pointsize>
-     <weight>50</weight>
-     <bold>false</bold>
-    </font>
-   </property>
-   <property name="text">
-    <string>Attack Direction</string>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignCenter</set>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_teamid">
-   <property name="geometry">
-    <rect>
-     <x>1160</x>
-     <y>30</y>
-     <width>61</width>
-     <height>51</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>.AppleSystemUIFont</family>
-     <pointsize>15</pointsize>
-     <weight>50</weight>
-     <bold>false</bold>
-    </font>
-   </property>
-   <property name="text">
-    <string>TeamID</string>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_matchid">
-   <property name="geometry">
-    <rect>
-     <x>970</x>
-     <y>30</y>
-     <width>71</width>
-     <height>51</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>.AppleSystemUIFont</family>
-     <pointsize>15</pointsize>
-     <weight>50</weight>
-     <bold>false</bold>
-    </font>
-   </property>
-   <property name="text">
-    <string>MatchID</string>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignCenter</set>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="lineEdit_teamid_h">
-   <property name="geometry">
-    <rect>
-     <x>1260</x>
-     <y>20</y>
-     <width>91</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>15</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-   <property name="readOnly">
-    <bool>false</bool>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_teamid_h">
-   <property name="geometry">
-    <rect>
-     <x>1210</x>
-     <y>20</y>
-     <width>61</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>.AppleSystemUIFont</family>
-     <pointsize>15</pointsize>
-     <weight>50</weight>
-     <bold>false</bold>
-    </font>
-   </property>
-   <property name="text">
-    <string>H</string>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignCenter</set>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="lineEdit_teamin_a">
-   <property name="geometry">
-    <rect>
-     <x>1260</x>
-     <y>50</y>
-     <width>91</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>15</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-   <property name="readOnly">
-    <bool>false</bool>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_teamid_a">
-   <property name="geometry">
-    <rect>
-     <x>1210</x>
-     <y>50</y>
-     <width>61</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>.AppleSystemUIFont</family>
-     <pointsize>15</pointsize>
-     <weight>50</weight>
-     <bold>false</bold>
-    </font>
-   </property>
-   <property name="text">
-    <string>A</string>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignCenter</set>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="lineEdit_matchid">
-   <property name="geometry">
-    <rect>
-     <x>1050</x>
-     <y>40</y>
-     <width>91</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>15</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-   <property name="readOnly">
-    <bool>false</bool>
-   </property>
-  </widget>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <widget class="QTableWidget" name="tableWidget">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>10</y>
+            <width>181</width>
+            <height>401</height>
+           </rect>
+          </property>
+          <property name="editTriggers">
+           <set>QAbstractItemView::NoEditTriggers</set>
+          </property>
+          <property name="dragEnabled">
+           <bool>false</bool>
+          </property>
+          <property name="showGrid">
+           <bool>true</bool>
+          </property>
+          <row>
+           <property name="text">
+            <string>패스 성공     </string>
+           </property>
+           <property name="textAlignment">
+            <set>AlignCenter</set>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>패스 실패</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>어시스트</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>크로스 성공     </string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>크로스 실패</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>슛</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>블락슛</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>유효슛</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>골</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>드리블</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>돌파</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>미스</string>
+           </property>
+          </row>
+          <column>
+           <property name="text">
+            <string>단축어</string>
+           </property>
+          </column>
+          <item row="0" column="0">
+           <property name="text">
+            <string>ss</string>
+           </property>
+           <property name="textAlignment">
+            <set>AlignCenter</set>
+           </property>
+          </item>
+          <item row="1" column="0">
+           <property name="text">
+            <string>s</string>
+           </property>
+           <property name="textAlignment">
+            <set>AlignCenter</set>
+           </property>
+          </item>
+          <item row="2" column="0">
+           <property name="text">
+            <string>zz</string>
+           </property>
+           <property name="textAlignment">
+            <set>AlignCenter</set>
+           </property>
+          </item>
+          <item row="3" column="0">
+           <property name="text">
+            <string>cc</string>
+           </property>
+           <property name="textAlignment">
+            <set>AlignCenter</set>
+           </property>
+          </item>
+          <item row="4" column="0">
+           <property name="text">
+            <string>c</string>
+           </property>
+           <property name="textAlignment">
+            <set>AlignCenter</set>
+           </property>
+          </item>
+          <item row="5" column="0">
+           <property name="text">
+            <string>d</string>
+           </property>
+           <property name="textAlignment">
+            <set>AlignCenter</set>
+           </property>
+          </item>
+          <item row="6" column="0">
+           <property name="text">
+            <string>db</string>
+           </property>
+           <property name="textAlignment">
+            <set>AlignCenter</set>
+           </property>
+          </item>
+          <item row="7" column="0">
+           <property name="text">
+            <string>dd</string>
+           </property>
+           <property name="textAlignment">
+            <set>AlignCenter</set>
+           </property>
+          </item>
+          <item row="8" column="0">
+           <property name="text">
+            <string>ddd</string>
+           </property>
+           <property name="textAlignment">
+            <set>AlignCenter</set>
+           </property>
+          </item>
+          <item row="9" column="0">
+           <property name="text">
+            <string>rr</string>
+           </property>
+           <property name="textAlignment">
+            <set>AlignCenter</set>
+           </property>
+          </item>
+          <item row="10" column="0">
+           <property name="text">
+            <string>ee</string>
+           </property>
+           <property name="textAlignment">
+            <set>AlignCenter</set>
+           </property>
+          </item>
+          <item row="11" column="0">
+           <property name="text">
+            <string>m</string>
+           </property>
+           <property name="textAlignment">
+            <set>AlignCenter</set>
+           </property>
+          </item>
+         </widget>
+         <widget class="QTableWidget" name="tableWidget_2">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="geometry">
+           <rect>
+            <x>210</x>
+            <y>10</y>
+            <width>161</width>
+            <height>401</height>
+           </rect>
+          </property>
+          <property name="editTriggers">
+           <set>QAbstractItemView::NoEditTriggers</set>
+          </property>
+          <property name="dragEnabled">
+           <bool>false</bool>
+          </property>
+          <property name="showGrid">
+           <bool>true</bool>
+          </property>
+          <row>
+           <property name="text">
+            <string>태클</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>인터셉트    </string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>획득</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>클리어</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>차단</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>블락</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>캐칭</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>펀칭</string>
+           </property>
+          </row>
+          <column>
+           <property name="text">
+            <string>단축어</string>
+           </property>
+          </column>
+          <item row="0" column="0">
+           <property name="text">
+            <string>aa</string>
+           </property>
+           <property name="textAlignment">
+            <set>AlignCenter</set>
+           </property>
+          </item>
+          <item row="1" column="0">
+           <property name="text">
+            <string>q</string>
+           </property>
+           <property name="textAlignment">
+            <set>AlignCenter</set>
+           </property>
+          </item>
+          <item row="2" column="0">
+           <property name="text">
+            <string>qq</string>
+           </property>
+           <property name="textAlignment">
+            <set>AlignCenter</set>
+           </property>
+          </item>
+          <item row="3" column="0">
+           <property name="text">
+            <string>w</string>
+           </property>
+           <property name="textAlignment">
+            <set>AlignCenter</set>
+           </property>
+          </item>
+          <item row="4" column="0">
+           <property name="text">
+            <string>ww</string>
+           </property>
+           <property name="textAlignment">
+            <set>AlignCenter</set>
+           </property>
+          </item>
+          <item row="5" column="0">
+           <property name="text">
+            <string>qw</string>
+           </property>
+           <property name="textAlignment">
+            <set>AlignCenter</set>
+           </property>
+          </item>
+          <item row="6" column="0">
+           <property name="text">
+            <string>v</string>
+           </property>
+           <property name="textAlignment">
+            <set>AlignCenter</set>
+           </property>
+          </item>
+          <item row="7" column="0">
+           <property name="text">
+            <string>vv</string>
+           </property>
+           <property name="textAlignment">
+            <set>AlignCenter</set>
+           </property>
+          </item>
+         </widget>
+         <widget class="QTableWidget" name="tableWidget_3">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="geometry">
+           <rect>
+            <x>390</x>
+            <y>10</y>
+            <width>181</width>
+            <height>401</height>
+           </rect>
+          </property>
+          <property name="editTriggers">
+           <set>QAbstractItemView::NoEditTriggers</set>
+          </property>
+          <property name="dragEnabled">
+           <bool>false</bool>
+          </property>
+          <property name="showGrid">
+           <bool>true</bool>
+          </property>
+          <row>
+           <property name="text">
+            <string>경합 성공     </string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>경합 실패</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>파울</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>피파울</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>오프사이드</string>
+           </property>
+          </row>
+          <column>
+           <property name="text">
+            <string>단축어</string>
+           </property>
+          </column>
+          <item row="0" column="0">
+           <property name="text">
+            <string>bb</string>
+           </property>
+           <property name="textAlignment">
+            <set>AlignCenter</set>
+           </property>
+          </item>
+          <item row="1" column="0">
+           <property name="text">
+            <string>b</string>
+           </property>
+           <property name="textAlignment">
+            <set>AlignCenter</set>
+           </property>
+          </item>
+          <item row="2" column="0">
+           <property name="text">
+            <string>f</string>
+           </property>
+           <property name="textAlignment">
+            <set>AlignCenter</set>
+           </property>
+          </item>
+          <item row="3" column="0">
+           <property name="text">
+            <string>ff</string>
+           </property>
+           <property name="textAlignment">
+            <set>AlignCenter</set>
+           </property>
+          </item>
+          <item row="4" column="0">
+           <property name="text">
+            <string>o</string>
+           </property>
+           <property name="textAlignment">
+            <set>AlignCenter</set>
+           </property>
+          </item>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item row="5" column="1" colspan="2">
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QLabel" name="label_datalinput">
+       <property name="font">
+        <font>
+         <family>.AppleSystemUIFont</family>
+         <pointsize>16</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Data Input</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="lineEdit_datainput">
+       <property name="font">
+        <font>
+         <pointsize>15</pointsize>
+        </font>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="2" column="1">
+    <layout class="QHBoxLayout" name="horizontalLayout_8">
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_7">
+       <item>
+        <widget class="QLabel" name="label_half">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <family>.AppleSystemUIFont</family>
+           <pointsize>15</pointsize>
+           <weight>50</weight>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Half</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <widget class="QRadioButton" name="radioButton_1sthalf">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>1st Half</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="radioButton_2ndhalf">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>2nd Half</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_6">
+       <item>
+        <widget class="QLabel" name="label_team">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <family>.AppleSystemUIFont</family>
+           <pointsize>15</pointsize>
+           <weight>50</weight>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Team</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_4">
+         <item>
+          <widget class="QRadioButton" name="radioButton_home">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Home</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="radioButton_away">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Away</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <item>
+        <widget class="QLabel" name="label_attackdirection">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <family>.AppleSystemUIFont</family>
+           <pointsize>15</pointsize>
+           <weight>50</weight>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Attack Direction</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <item>
+          <widget class="QRadioButton" name="radioButton_right">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="radioButton_left">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections/>
