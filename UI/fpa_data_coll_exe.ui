@@ -650,6 +650,11 @@ QComboBox::drop-down {
            <string/>
           </property>
          </row>
+         <row>
+          <property name="text">
+           <string/>
+          </property>
+         </row>
          <column>
           <property name="text">
            <string>공격</string>
@@ -723,7 +728,7 @@ QComboBox::drop-down {
          </item>
          <item row="0" column="4">
           <property name="text">
-           <string>경합 성공</string>
+           <string>경합 실패</string>
           </property>
           <property name="textAlignment">
            <set>AlignCenter</set>
@@ -771,7 +776,7 @@ QComboBox::drop-down {
          </item>
          <item row="1" column="4">
           <property name="text">
-           <string>경합 실패</string>
+           <string>경합 성공</string>
           </property>
           <property name="textAlignment">
            <set>AlignCenter</set>
@@ -1084,6 +1089,22 @@ QComboBox::drop-down {
          <item row="11" column="1">
           <property name="text">
            <string>m</string>
+          </property>
+          <property name="textAlignment">
+           <set>AlignCenter</set>
+          </property>
+         </item>
+         <item row="12" column="0">
+          <property name="text">
+           <string>키패스</string>
+          </property>
+          <property name="textAlignment">
+           <set>AlignCenter</set>
+          </property>
+         </item>
+         <item row="12" column="1">
+          <property name="text">
+           <string>z</string>
           </property>
           <property name="textAlignment">
            <set>AlignCenter</set>
