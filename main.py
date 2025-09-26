@@ -96,15 +96,13 @@ def analyze_pass_data(df):
     return df
 
 
-# 기존 create_player_summary 함수를 이 코드로 전체 교체
+# 1. create_player_summary 수정
 def create_player_summary(df_analyzed):
+    all_players = df_analyzed['Player'].unique()  # 전체 선수 명단 확보
     pass_actions = ['Pass', 'Cross']
-    # 'Tags' 컬럼이 없는 옛날 데이터와의 호환성을 위해 없으면 빈 컬럼 추가
-    if 'Tags' not in df_analyzed.columns:
-        df_analyzed['Tags'] = ''
-
+    if 'Tags' not in df_analyzed.columns: df_analyzed['Tags'] = ''
     df_pass = df_analyzed[df_analyzed['Action'].isin(pass_actions)].copy()
-    if df_pass.empty: return pd.DataFrame()
+    if df_pass.empty: return pd.DataFrame(index=all_players).fillna(0)
 
     summary = df_pass.groupby('Player').agg(
         Total_Pass=('Action', 'count'),
@@ -112,33 +110,149 @@ def create_player_summary(df_analyzed):
         Key_Pass=('Tags', lambda x: x.str.contains('Key').sum()),
         Assist=('Tags', lambda x: x.str.contains('Assist').sum())
     )
+    # ▼▼▼ (추가) 전체 선수 명단을 기준으로 결과표를 재구성하고 없는 선수는 0으로 채움 ▼▼▼
+    summary = summary.reindex(all_players).fillna(0)
 
     summary['Fail_Pass'] = summary['Total_Pass'] - summary['Success_Pass']
-    summary['Pass_Success_Rate'] = (summary['Success_Pass'] / summary['Total_Pass'] * 100).round(2)
+    summary['Pass_Success_Rate'] = (summary['Success_Pass'] / summary['Total_Pass'] * 100).fillna(0).round(2)
+    # ... (이하 기존과 동일) ...
     pivot_direction = pd.pivot_table(df_pass, values='Action', index='Player', columns='Pass_Direction',
-                                     aggfunc='count', fill_value=0)
-    pivot_distance = pd.pivot_table(df_pass, values='Action', index='Player', columns='Pass_Distance', aggfunc='count',
-                                    fill_value=0)
+                                     aggfunc='count').reindex(all_players).fillna(0)
+    pivot_distance = pd.pivot_table(df_pass, values='Action', index='Player', columns='Pass_Distance',
+                                    aggfunc='count').reindex(all_players).fillna(0)
     summary = summary.join(pivot_direction, how='left').join(pivot_distance, how='left').fillna(0)
-
     ALL_DIRECTIONS = ['forward', 'left', 'right', 'backward'];
     ALL_DISTANCES = ['short', 'middle', 'long']
     for col in ALL_DIRECTIONS:
         if col not in summary.columns: summary[col] = 0
     for col in ALL_DISTANCES:
         if col not in summary.columns: summary[col] = 0
-
     int_cols = ['Total_Pass', 'Success_Pass', 'Fail_Pass', 'Key_Pass', 'Assist'] + ALL_DIRECTIONS + ALL_DISTANCES
     for col in int_cols:
         if col in summary.columns: summary[col] = summary[col].astype(int)
-
     final_columns_order = ['Total_Pass', 'Success_Pass', 'Fail_Pass', 'Pass_Success_Rate', 'Key_Pass', 'Assist',
                            'forward', 'backward', 'left', 'right', 'short', 'middle', 'long']
     ordered_cols = [col for col in final_columns_order if col in summary.columns]
     summary = summary[ordered_cols]
-    summary = summary.sort_values(by='Total_Pass', ascending=False)
+    return summary.sort_values(by='Total_Pass', ascending=False)
+
+
+# 2. create_shooter_summary 수정
+def create_shooter_summary(df_with_xg):
+    all_players = df_with_xg['Player'].unique()
+    shot_actions = ['Goal', 'Shot On Target', 'Shot', 'Blocked Shot']
+    df_shots = df_with_xg[df_with_xg['Action'].isin(shot_actions)].copy()
+    if df_shots.empty: return pd.DataFrame(index=all_players).fillna(0)
+    if 'Tags' not in df_shots.columns: df_shots['Tags'] = ''
+    df_shots['Tags'] = df_shots['Tags'].fillna('')
+
+    summary = df_shots.groupby('Player').agg(
+        Total_Shots=('Action', 'count'),
+        Shots_On_Target=('Action', lambda x: x.isin(['Shot On Target', 'Goal']).sum()),
+        Goals=('Action', lambda x: (x == 'Goal').sum()),
+        Total_xG=('xG', 'sum')
+    ).reindex(all_players).fillna(0)  # reindex 및 fillna(0) 추가
+
+    headed_goals = \
+    df_shots[(df_shots['Action'] == 'Goal') & (df_shots['Tags'].str.contains('Header'))].groupby('Player')[
+        'Action'].count()
+    outbox_goals = \
+    df_shots[(df_shots['Action'] == 'Goal') & (df_shots['Tags'].str.contains('Out-box'))].groupby('Player')[
+        'Action'].count()
+    summary = summary.join(headed_goals.rename('Headed_Goals'))
+    summary = summary.join(outbox_goals.rename('Outbox_Goals'))
+    summary[['Headed_Goals', 'Outbox_Goals']] = summary[['Headed_Goals', 'Outbox_Goals']].fillna(0).astype(int)
+    return summary.sort_values(by='Goals', ascending=False)
+
+
+# 3. create_cross_summary 수정
+def create_cross_summary(df_analyzed):
+    all_players = df_analyzed['Player'].unique()
+    if 'Tags' not in df_analyzed.columns: df_analyzed['Tags'] = ''
+    df_cross = df_analyzed[df_analyzed['Action'] == 'Cross'].copy()
+    if df_cross.empty: return pd.DataFrame(index=all_players).fillna(0)
+
+    summary = df_cross.groupby('Player').agg(
+        Total_Crosses=('Action', 'count'),
+        Successful_Crosses=('Tags', lambda x: x.str.contains('Success').sum())
+    ).reindex(all_players).fillna(0)  # reindex 및 fillna(0) 추가
+    summary['Cross_Accuracy'] = (summary['Successful_Crosses'] / summary['Total_Crosses'] * 100).fillna(0).round(2)
     return summary
 
+
+# 4. create_tackle_summary 수정
+def create_tackle_summary(df_analyzed):
+    all_players = df_analyzed['Player'].unique()
+    if 'Tags' not in df_analyzed.columns: df_analyzed['Tags'] = ''
+    df_tackle = df_analyzed[df_analyzed['Action'] == 'Tackle'].copy()
+    if df_tackle.empty: return pd.DataFrame(index=all_players).fillna(0)
+
+    summary = df_tackle.groupby('Player').agg(
+        Total_Tackles=('Action', 'count'),
+        Successful_Tackles=('Tags', lambda x: x.str.contains('Success').sum())
+    ).reindex(all_players).fillna(0)  # reindex 및 fillna(0) 추가
+    summary['Tackle_Success_Rate'] = (summary['Successful_Tackles'] / summary['Total_Tackles'] * 100).fillna(0).round(2)
+    return summary
+
+
+# 5. create_heading_summary 수정
+def create_heading_summary(df_analyzed):
+    all_players = df_analyzed['Player'].unique()
+    if 'Tags' not in df_analyzed.columns: df_analyzed['Tags'] = ''
+
+    df_aerial = df_analyzed[(df_analyzed['Action'] == 'Duel') & (df_analyzed['Tags'].str.contains('Aerial'))].copy()
+    if not df_aerial.empty:
+        aerial_summary = df_aerial.groupby('Player').agg(
+            Total_Aerial_Duels=('Action', 'count'),
+            Aerial_Duels_Won=('Tags', lambda x: x.str.contains('Success').sum())
+        )
+        aerial_summary['Aerial_Duel_Success_Rate'] = (
+                    aerial_summary['Aerial_Duels_Won'] / aerial_summary['Total_Aerial_Duels'] * 100).round(2)
+    else:
+        aerial_summary = pd.DataFrame()
+
+    shot_actions = ['Shot', 'Shot On Target', 'Goal']
+    df_headed_shots = df_analyzed[
+        (df_analyzed['Action'].isin(shot_actions)) & (df_analyzed['Tags'].str.contains('Header'))].copy()
+    if not df_headed_shots.empty:
+        headed_shot_summary = df_headed_shots.groupby('Player').agg(
+            Total_Headed_Shots=('Action', 'count'),
+            Headed_Shots_On_Target=('Action', lambda x: x.isin(['Shot On Target', 'Goal']).sum())
+        )
+        headed_shot_summary['Headed_SOT_Rate'] = (headed_shot_summary['Headed_Shots_On_Target'] / headed_shot_summary[
+            'Total_Headed_Shots'] * 100).round(2)
+    else:
+        headed_shot_summary = pd.DataFrame()
+
+    if aerial_summary.empty and headed_shot_summary.empty:
+        summary = pd.DataFrame(index=all_players)
+    elif aerial_summary.empty:
+        summary = headed_shot_summary
+    elif headed_shot_summary.empty:
+        summary = aerial_summary
+    else:
+        summary = pd.merge(aerial_summary, headed_shot_summary, on='Player', how='outer')
+
+    return summary.reindex(all_players).fillna(0)  # reindex 및 fillna(0) 추가
+
+
+# 6. calculate_heading_score 수정 (0으로 나누기 방지)
+def calculate_heading_score(df_heading_summary):
+    summary = df_heading_summary.copy()
+    if summary.empty: return summary
+    required_cols = ['Aerial_Duel_Success_Rate', 'Headed_SOT_Rate', 'Aerial_Duels_Won']
+    for col in required_cols:
+        if col not in summary.columns: summary[col] = 0
+    aerial_score = summary['Aerial_Duel_Success_Rate'] * 0.5
+    shot_score = summary['Headed_SOT_Rate'] * 0.3
+    volume_bonus = np.log1p(summary['Aerial_Duels_Won']) * 2
+    summary['Raw_Heading_Score'] = aerial_score + shot_score + volume_bonus
+    mid_point = 45;
+    steepness = 0.1
+    raw_scores = summary['Raw_Heading_Score']
+    heading_scores = 100 / (1 + np.exp(-steepness * (raw_scores - mid_point)))
+    summary['Heading_Score'] = heading_scores.round(0).astype(int)
+    return summary
 
 def calculate_pass_score(df_summary):
     """
@@ -210,55 +324,109 @@ def add_xg_to_data(df):
 
     return df
 
-
-def create_shooter_summary(df_with_xg):
-    """
-    xG가 포함된 데이터로부터 선수별 슈팅 요약 통계를 생성합니다.
-    """
-    shot_actions = ['Goal', 'Shot On Target', 'Shot', 'Blocked Shot']
-    df_shots = df_with_xg[df_with_xg['Action'].isin(shot_actions)].copy()
-
-    if df_shots.empty:
-        return pd.DataFrame()
-
-    summary = df_shots.groupby('Player').agg(
-        Total_Shots=('Action', 'count'),
-        Shots_On_Target=('Action', lambda x: x.isin(['Shot On Target', 'Goal']).sum()),
-        Goals=('Action', lambda x: (x == 'Goal').sum()),
-        Total_xG=('xG', 'sum')
-    ).fillna(0)
-
-    # 보기 좋게 정렬
-    summary = summary.sort_values(by='Goals', ascending=False)
-
-    return summary
-
-
 def calculate_shooting_score(df_shooter_summary):
     """
-    선수별 슈팅 요약 통계로부터 슈팅 점수를 계산합니다. (절대평가)
+    선수별 슈팅 요약 통계로부터 슈팅 점수를 계산합니다. (태그 보너스 추가)
     """
     summary = df_shooter_summary.copy()
     if summary.empty:
         return summary
 
-    # 1. '결정력'과 '위협도'를 기반으로 Raw Score 계산
-    # 결정력(Finishing) = 실제 득점이 기대 득점보다 얼마나 많았는가
-    # 위협도(Threat) = 얼마나 득점 확률 높은 슛을 많이 만들어냈는가
+    # 1. 기본 점수 계산
     finishing_score = (summary['Goals'] - summary['Total_xG']) * 15
     threat_score = summary['Total_xG'] * 20
 
-    summary['Raw_Shooting_Score'] = finishing_score + threat_score
+    # ▼▼▼▼▼ (추가된 부분) 태그 기반 보너스 점수 계산 ▼▼▼▼▼
+    # 헤더 골은 1골당 3점, 박스 밖 골은 1골당 5점의 보너스
+    headed_bonus = summary.get('Headed_Goals', 0) * 3
+    outbox_bonus = summary.get('Outbox_Gals', 0) * 5  # Outbox_Goals
 
-    # 2. Sigmoid 함수를 이용해 1~100점 절대 점수로 변환
-    mid_point = 10  # Raw_Shooting_Score가 10점일 때 50점이 되는 기준점
-    steepness = 0.15  # 곡선의 기울기
+    summary['Specialty_Bonus'] = headed_bonus + outbox_bonus
+    # ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
 
+    summary['Raw_Shooting_Score'] = finishing_score + threat_score + summary['Specialty_Bonus']
+
+    # 2. Sigmoid 함수로 1~100점 변환
+    mid_point = 10
+    steepness = 0.15
     raw_scores = summary['Raw_Shooting_Score']
     shooting_scores = 100 / (1 + np.exp(-steepness * (raw_scores - mid_point)))
 
     summary['Shooting_Score'] = shooting_scores.round(0).astype(int)
+    return summary
 
+def calculate_cross_score(df_cross_summary):
+    """
+    선수별 크로스 요약 통계로부터 CRO 스탯 점수를 계산합니다.
+    """
+    summary = df_cross_summary.copy()
+    if summary.empty:
+        return summary
+
+    # Raw Score 계산: (정확도 * 70%) + (성공 횟수 보너스)
+    accuracy_score = summary['Cross_Accuracy'] * 0.7
+    volume_bonus = np.log1p(summary['Successful_Crosses']) * 3
+    summary['Raw_Cross_Score'] = accuracy_score + volume_bonus
+
+    # Sigmoid 함수로 1~100점 변환
+    mid_point = 40  # Raw Score 40점을 평균(50점)으로 설정
+    steepness = 0.1
+    raw_scores = summary['Raw_Cross_Score']
+    cross_scores = 100 / (1 + np.exp(-steepness * (raw_scores - mid_point)))
+
+    summary['Cross_Score'] = cross_scores.round(0).astype(int)
+    return summary
+
+def calculate_tackle_score(df_tackle_summary):
+    """
+    선수별 태클 요약 통계로부터 TAC 스탯 점수를 계산합니다.
+    """
+    summary = df_tackle_summary.copy()
+    if summary.empty:
+        return summary
+
+    # Raw Score 계산: (성공률 * 60%) + (성공 횟수 보너스)
+    accuracy_score = summary['Tackle_Success_Rate'] * 0.6
+    volume_bonus = np.log1p(summary['Successful_Tackles']) * 4
+    summary['Raw_Tackle_Score'] = accuracy_score + volume_bonus
+
+    # Sigmoid 함수로 1~100점 변환
+    mid_point = 50  # Raw Score 50점을 평균(50점)으로 설정
+    steepness = 0.1
+    raw_scores = summary['Raw_Tackle_Score']
+    tackle_scores = 100 / (1 + np.exp(-steepness * (raw_scores - mid_point)))
+
+    summary['Tackle_Score'] = tackle_scores.round(0).astype(int)
+    return summary
+
+
+def calculate_heading_score(df_heading_summary):
+    """
+    선수별 헤딩 요약 통계로부터 HED 스탯 점수를 계산합니다.
+    """
+    summary = df_heading_summary.copy()
+    if summary.empty:
+        return summary
+
+    # 필요한 컬럼이 없을 경우 0으로 채우기
+    required_cols = ['Aerial_Duel_Success_Rate', 'Headed_SOT_Rate', 'Aerial_Duels_Won']
+    for col in required_cols:
+        if col not in summary.columns:
+            summary[col] = 0
+
+    # Raw Score 계산: (공중볼 성공률 * 50%) + (헤딩 유효슛 비율 * 30%) + (공중볼 성공 횟수 보너스)
+    aerial_score = summary['Aerial_Duel_Success_Rate'] * 0.5
+    shot_score = summary['Headed_SOT_Rate'] * 0.3
+    volume_bonus = np.log1p(summary['Aerial_Duels_Won']) * 2
+    summary['Raw_Heading_Score'] = aerial_score + shot_score + volume_bonus
+
+    # Sigmoid 함수로 1~100점 변환
+    mid_point = 45
+    steepness = 0.1
+    raw_scores = summary['Raw_Heading_Score']
+    heading_scores = 100 / (1 + np.exp(-steepness * (raw_scores - mid_point)))
+
+    summary['Heading_Score'] = heading_scores.round(0).astype(int)
     return summary
 
 class DataLogUI(QDialog):
@@ -400,17 +568,16 @@ class DataLogUI(QDialog):
         if reply == QMessageBox.Yes:
             self.move_to_mode(mode_text)
 
-
+    # 기존 upload_data 함수를 이 코드로 전체 교체해주세요.
     def upload_data(self):
         file_path, _ = QFileDialog.getOpenFileName(
-            self, "Upload Data", "", "CSV Files (*.csv);;Excel Files (*.xlsx)"
+            self, "Upload Data", "", "Excel Files (*.xlsx);;CSV Files (*.csv)"
         )
         if not file_path:
             return
 
         try:
             if file_path.endswith('.xlsx'):
-                # ▼▼▼ 여기에 sheet_name='Data'를 추가해서 'Data' 시트만 읽도록 수정! ▼▼▼
                 df = pd.read_excel(file_path, sheet_name='Data')
             elif file_path.endswith('.csv'):
                 df = pd.read_csv(file_path)
@@ -418,53 +585,45 @@ class DataLogUI(QDialog):
                 QMessageBox.warning(self, "Unsupported", "지원되지 않는 파일 형식입니다.")
                 return
 
-            required_columns = {
-                'Half', 'Team', 'Direction', 'Time',
-                'Player', 'Receiver', 'Action',
-                'StartX', 'StartY', 'EndX', 'EndY'
-            }
-            if not required_columns.issubset(df.columns):
-                QMessageBox.critical(
-                    self, "형식 오류",
-                    "파일에 필요한 컬럼이 없습니다:\nHalf, Team, Direction, Time, Player, Receiver, Action, StartX, StartY, EndX, EndY"
-                )
-                return
-
             self.listWidget.clear()
+
+            two_player_actions = ['Pass', 'Cross']
+
             for _, row in df.iterrows():
+                # --- ▼▼▼ (수정된 부분) 숫자 형식을 정수로 변환하는 로직 추가 ▼▼▼ ---
+                player_raw = row.get('Player', '')
+                receiver_raw = row.get('Receiver', '')
+
+                # 실수를 정수로 변환한 뒤 문자열로 변경
+                player = str(int(float(player_raw))) if pd.notna(player_raw) and str(player_raw).strip() != '' else ''
+                receiver = str(int(float(receiver_raw))) if pd.notna(receiver_raw) and str(
+                    receiver_raw).strip() != '' else ''
+                # --- ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
                 half = str(row.get('Half', '')).strip()
                 team = str(row.get('Team', '')).strip()
                 direction = str(row.get('Direction', '')).strip()
                 time = str(row.get('Time', '')).strip()
-
-                player_raw = row.get('Player', '')
-                receiver_raw = row.get('Receiver', '')
                 action = str(row.get('Action', '')).strip()
-
                 start_x = str(row.get('StartX', '')).strip()
                 start_y = str(row.get('StartY', '')).strip()
                 end_x = str(row.get('EndX', '')).strip()
                 end_y = str(row.get('EndY', '')).strip()
+                tags = str(row.get('Tags', '')).strip()
 
-                # 숫자 변환
-                player = str(int(player_raw)) if pd.notna(player_raw) and str(player_raw).strip() != '' else ''
-                receiver = str(int(receiver_raw)) if pd.notna(receiver_raw) and str(receiver_raw).strip() != '' else ''
+                log_text = f"{half} | {team} | {direction} | {time} | Pos({start_x}, {start_y}) | {player} {action}"
 
-                # 로그 문자열 구성
-                log = f"{half} | {team} | {direction} | {time} | Pos({start_x}, {start_y})"
-                if player or action:
-                    log += f" | {player} {action}"
-                if receiver:
-                    log += f" to {receiver}"
-                elif end_x and end_y:
-                    log += " to N/A"
-                if end_x and end_y:
-                    log += f" | Pos({end_x}, {end_y})"
+                if action in two_player_actions and receiver:
+                    log_text += f" to {receiver} | Pos({end_x}, {end_y})"
 
-                self.listWidget.addItem(log)
+                if tags:
+                    log_text += f" | Tags: {tags}"
+
+                self.listWidget.addItem(log_text)
 
         except Exception as e:
             QMessageBox.critical(self, "Error", f"파일을 불러오는 중 오류 발생: {str(e)}")
+
 
     def on_field_click(self, event):
         if event.button() == QtCore.Qt.LeftButton:
@@ -564,6 +723,31 @@ class DataLogUI(QDialog):
                     if not df_pass_scores.empty: df_pass_scores.to_excel(writer, sheet_name='Player_Score')
                     if not df_shooter_summary.empty: df_shooter_summary.to_excel(writer, sheet_name='Shooter_Summary')
                     if not df_shooter_scores.empty: df_shooter_scores.to_excel(writer, sheet_name='Shooting_Score')
+
+                    df_cross_summary = create_cross_summary(df_analyzed_with_xg)
+                    if not df_cross_summary.empty:
+                        df_cross_summary.to_excel(writer, sheet_name='Cross_Summary')
+
+                        df_cross_scores = calculate_cross_score(df_cross_summary)
+                        if not df_cross_scores.empty:
+                            df_cross_scores.to_excel(writer, sheet_name='Cross_Score')
+
+                    df_tackle_summary = create_tackle_summary(df_analyzed_with_xg)
+                    if not df_tackle_summary.empty:
+                        df_tackle_summary.to_excel(writer, sheet_name='Tackle_Summary')
+
+                        df_tackle_scores = calculate_tackle_score(df_tackle_summary)
+                        if not df_tackle_scores.empty:
+                            df_tackle_scores.to_excel(writer, sheet_name='Tackle_Score')
+
+                    df_heading_summary = create_heading_summary(df_analyzed_with_xg)
+                    if not df_heading_summary.empty:
+                        df_heading_summary.to_excel(writer, sheet_name='Heading_Summary')
+
+                        df_heading_scores = calculate_heading_score(df_heading_summary)
+                        if not df_heading_scores.empty:
+                            df_heading_scores.to_excel(writer, sheet_name='Heading_Score')
+
             else:
                 if not file_path.endswith('.csv'): file_path += '.csv'
                 df_analyzed.to_csv(file_path, index=False, encoding="utf-8-sig")
@@ -572,7 +756,7 @@ class DataLogUI(QDialog):
         except Exception as e:
             QMessageBox.critical(self, "저장 실패", f"파일 저장 중 오류 발생:\n{str(e)}")
 
-    # 기존 submit_stat 함수를 이 코드로 전체 교체
+    # 기존 submit_stat 함수를 이 코드로 전체 교체해주세요.
     def submit_stat(self):
         time = self.lineEdit_timeline.text().strip()
         stat_input = self.lineEdit_datainput.text().strip().lower()
@@ -586,12 +770,12 @@ class DataLogUI(QDialog):
             team = match_info["Team"].lower();
             direction = match_info["Direction"].lower()
 
-            # 1. '.'을 기준으로 기본 액션과 태그 분리
+            # 1. 입력값 분리
             parts = stat_input.split('.', 1)
             base_action_part = parts[0]
             tag_codes = parts[1].split('.') if len(parts) > 1 else []
 
-            # 2. 기본 액션 파싱 (정규식 사용)
+            # 2. 기본 액션 파싱
             match = re.match(r"(\d+)([a-z]+)(\d*)", base_action_part)
             if not match:
                 raise ValueError("기본 입력 형식이 올바르지 않습니다 (예: 10ss8 또는 7d).")
@@ -600,19 +784,29 @@ class DataLogUI(QDialog):
             action_code = match.group(2)
             player_to = int(match.group(3)) if match.group(3) else ''
 
-            # 3. 액션 이름 및 성공/실패 태그 결정
+            # 3. 액션 이름 및 태그 결정
             action_name = '';
             tags_list = []
-            # 슈팅 예외 규칙
+
+            # ▼▼▼▼▼ (수정된 로직) ▼▼▼▼▼
+            # 슈팅 예외 규칙 우선 처리
             if action_code in ['d', 'dd', 'ddd', 'db']:
                 action_name = self.ACTION_CODES[action_code]
-                tags_list.append('Success' if action_code in ['dd', 'ddd'] else 'Fail')
-            # 성공/실패 반복 규칙
+                # 슈팅의 경우에도 Success/Fail 태그를 명시적으로 추가
+                if action_code in ['dd', 'ddd']:
+                    tags_list.append('Success')
+                else:
+                    tags_list.append('Fail')
+            # 일반 성공/실패 반복 규칙 처리
             elif len(action_code) > 0:
                 base_code = action_code[0]
                 if base_code in self.ACTION_CODES:
                     action_name = self.ACTION_CODES[base_code]
-                    tags_list.append('Success' if len(action_code) > 1 and action_code[0] == action_code[1] else 'Fail')
+                    if len(action_code) > 1 and action_code[0] == action_code[1]:
+                        tags_list.append('Success')
+                    else:
+                        tags_list.append('Fail')
+            # ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
 
             if not action_name: raise ValueError(f"'{action_code}'는 알 수 없는 액션 코드입니다.")
 
@@ -620,12 +814,12 @@ class DataLogUI(QDialog):
             for tc in tag_codes:
                 if tc in self.TAG_CODES: tags_list.append(self.TAG_CODES[tc])
 
-            # 5. 로그 생성
+            # 5. 로그 생성 (이하 동일)
             log_tags_str = f" | Tags: {', '.join(tags_list)}"
 
             if not self.dot_items: raise ValueError("위치를 먼저 클릭해주세요.")
 
-            if player_to:  # 두 선수 액션
+            if player_to:
                 if len(self.dot_items) < 2: raise ValueError("두 개의 위치가 필요합니다.")
                 start_dot, end_dot = self.dot_items[-2].rect().center(), self.dot_items[-1].rect().center()
                 start_x = round(start_dot.x() * self.FIELD_WIDTH / self.PIXEL_WIDTH, 2)
@@ -633,7 +827,7 @@ class DataLogUI(QDialog):
                 end_x = round(end_dot.x() * self.FIELD_WIDTH / self.PIXEL_WIDTH, 2)
                 end_y = round((self.PIXEL_HEIGHT - end_dot.y()) * self.FIELD_HEIGHT / self.PIXEL_HEIGHT, 2)
                 log_text = f"{half} | {team} | {direction} | {time} | Pos({start_x}, {start_y}) | {player_from} {action_name} to {player_to} | Pos({end_x}, {end_y})"
-            else:  # 한 선수 액션
+            else:
                 start_dot = self.dot_items[-1].rect().center()
                 start_x = round(start_dot.x() * self.FIELD_WIDTH / self.PIXEL_WIDTH, 2)
                 start_y = round((self.PIXEL_HEIGHT - start_dot.y()) * self.FIELD_HEIGHT / self.PIXEL_HEIGHT, 2)
@@ -641,7 +835,6 @@ class DataLogUI(QDialog):
 
             self.listWidget.addItem(log_text + log_tags_str)
 
-            # 6. 마무리
             for dot in self.dot_items: self.scene.removeItem(dot)
             self.dot_items.clear()
             self.lineEdit_datainput.clear();
