@@ -96,22 +96,23 @@ def analyze_pass_data(df):
     return df
 
 
+# 기존 create_player_summary 함수를 이 코드로 전체 교체
 def create_player_summary(df_analyzed):
-    # ... (기존의 1, 2번 로직은 동일) ...
-    pass_actions = ['Pass Success', 'Pass Fail', 'Key Pass', 'Assist']
+    pass_actions = ['Pass', 'Cross']
+    # 'Tags' 컬럼이 없는 옛날 데이터와의 호환성을 위해 없으면 빈 컬럼 추가
+    if 'Tags' not in df_analyzed.columns:
+        df_analyzed['Tags'] = ''
+
     df_pass = df_analyzed[df_analyzed['Action'].isin(pass_actions)].copy()
     if df_pass.empty: return pd.DataFrame()
-    df_pass['is_success'] = np.where(df_pass['Action'] == 'Pass Fail', 0, 1)
 
-    # 3. (수정) 선수별 기본 통계에 Key_Pass와 Assist 추가
     summary = df_pass.groupby('Player').agg(
         Total_Pass=('Action', 'count'),
-        Success_Pass=('is_success', 'sum'),
-        Key_Pass=('Action', lambda x: (x == 'Key Pass').sum()),
-        Assist=('Action', lambda x: (x == 'Assist').sum())
+        Success_Pass=('Tags', lambda x: x.str.contains('Success').sum()),
+        Key_Pass=('Tags', lambda x: x.str.contains('Key').sum()),
+        Assist=('Tags', lambda x: x.str.contains('Assist').sum())
     )
 
-    # ... (이후 4, 5, 6, 7, 8, 9번 로직은 이전과 동일) ...
     summary['Fail_Pass'] = summary['Total_Pass'] - summary['Success_Pass']
     summary['Pass_Success_Rate'] = (summary['Success_Pass'] / summary['Total_Pass'] * 100).round(2)
     pivot_direction = pd.pivot_table(df_pass, values='Action', index='Player', columns='Pass_Direction',
@@ -120,7 +121,7 @@ def create_player_summary(df_analyzed):
                                     fill_value=0)
     summary = summary.join(pivot_direction, how='left').join(pivot_distance, how='left').fillna(0)
 
-    ALL_DIRECTIONS = ['forward', 'left', 'right', 'backward']
+    ALL_DIRECTIONS = ['forward', 'left', 'right', 'backward'];
     ALL_DISTANCES = ['short', 'middle', 'long']
     for col in ALL_DIRECTIONS:
         if col not in summary.columns: summary[col] = 0
@@ -131,16 +132,11 @@ def create_player_summary(df_analyzed):
     for col in int_cols:
         if col in summary.columns: summary[col] = summary[col].astype(int)
 
-    final_columns_order = [
-        'Total_Pass', 'Success_Pass', 'Fail_Pass', 'Pass_Success_Rate',
-        'Key_Pass', 'Assist',  # <-- 추가
-        'forward', 'backward', 'left', 'right',
-        'short', 'middle', 'long'
-    ]
+    final_columns_order = ['Total_Pass', 'Success_Pass', 'Fail_Pass', 'Pass_Success_Rate', 'Key_Pass', 'Assist',
+                           'forward', 'backward', 'left', 'right', 'short', 'middle', 'long']
     ordered_cols = [col for col in final_columns_order if col in summary.columns]
     summary = summary[ordered_cols]
     summary = summary.sort_values(by='Total_Pass', ascending=False)
-
     return summary
 
 
@@ -333,6 +329,20 @@ class DataLogUI(QDialog):
         # ⌫ 백스페이스로 도트 삭제
         self.installEventFilter(self)
 
+        # --- ▼▼▼ (수정) 새로운 스탯 사전 정의 ▼▼▼ ---
+        self.ACTION_CODES = {
+            's': 'Pass', 'c': 'Cross', 'r': 'Dribble', 'e': 'Breakthrough',
+            't': 'Tackle', 'u': 'Duel', 'd': 'Shot', 'dd': 'Shot On Target',
+            'ddd': 'Goal', 'db': 'Blocked Shot', 'i': 'Intercept', 'l': 'Clear',
+            'b': 'Block', 'q': 'Acquisition', 'v': 'Save', 'm': 'Miss', 'f': 'Foul', 'o': 'Offside'
+        }
+        self.TAG_CODES = {
+            'k': 'Key', 'a': 'Assist', 'h': 'Header', 'r': 'Aerial',
+            'w': 'Suffered', 'n': 'In-box', 'u': 'Out-box'
+        }
+        # 두 선수 상호작용이 필요한 액션 코드 정의
+        self.TWO_PLAYER_ACTIONS = ['ss', 's', 'cc', 'c']
+
     def get_id_inputs(self):
         match_id = self.lineEdit_matchid.text().strip() if hasattr(self, "lineEdit_matchid") else ""
 
@@ -483,263 +493,163 @@ class DataLogUI(QDialog):
         if selected >= 0:
             self.listWidget.takeItem(selected)
 
+    # 기존 export_log 함수를 이 코드로 전체 교체
     def export_log(self):
-        # 1. 저장할 로그가 있는지 먼저 확인합니다.
-        if self.listWidget.count() == 0:
-            QMessageBox.information(self, "내보내기 실패", "저장할 로그가 없습니다.")
-            return
+        if self.listWidget.count() == 0: QMessageBox.information(self, "내보내기 실패", "저장할 로그가 없습니다."); return
+        file_path, _ = QFileDialog.getSaveFileName(self, "로그 저장", "", "Excel Files (*.xlsx);;CSV Files (*.csv)")
+        if not file_path: return
 
-        # 2. 사용자에게 어디에 저장할지 물어봅니다.
-        #    파일 필터를 수정하여 Excel이 기본으로 선택되도록 순서를 변경했습니다.
-        file_path, _ = QFileDialog.getSaveFileName(
-            self, "로그 저장", "", "Excel Files (*.xlsx);;CSV Files (*.csv)"
-        )
-
-        # 사용자가 취소하면 아무것도 하지 않습니다.
-        if not file_path:
-            return
-
-        # 3. listWidget에서 모든 로그 텍스트를 가져옵니다.
         logs = [self.listWidget.item(i).text() for i in range(self.listWidget.count())]
-
-        # 4. 텍스트 로그를 파싱하여 딕셔너리 리스트로 변환합니다.
         parsed_logs = []
+
         for log in logs:
-            # A타입 매칭 (패스, 어시스트 등)
-            a_match = re.match(
-                r"(.+?) \| (.+?) \| (.+?) \| (.+?) \| Pos\((.+?), (.+?)\) \| (\d+) (.+?) to (\d+) \| Pos\((.+?), (.+?)\)",
-                log
-            )
-            if a_match:
-                parsed_logs.append({
-                    "Half": a_match.group(1).strip(), "Team": a_match.group(2).strip(),
-                    "Direction": a_match.group(3).strip(), "Time": a_match.group(4).strip(),
-                    "Player": a_match.group(7).strip(), "Receiver": a_match.group(9).strip(),
-                    "Action": a_match.group(8).strip(), "StartX": a_match.group(5).strip(),
-                    "StartY": a_match.group(6).strip(), "EndX": a_match.group(10).strip(),
-                    "EndY": a_match.group(11).strip(),
-                })
-                continue
+            log_dict = {}
+            parts = log.split(' | ')
+            log_dict['Half'] = parts[0];
+            log_dict['Team'] = parts[1];
+            log_dict['Direction'] = parts[2];
+            log_dict['Time'] = parts[3]
 
-            # B타입 매칭 (슛, 드리블 등)
-            b_match = re.match(
-                r"(.+?) \| (.+?) \| (.+?) \| (.+?) \| Pos\((.+?), (.+?)\) \| (\d+) (.+?) to N/A",
-                log
-            )
-            if b_match:
-                parsed_logs.append({
-                    "Half": b_match.group(1).strip(), "Team": b_match.group(2).strip(),
-                    "Direction": b_match.group(3).strip(), "Time": b_match.group(4).strip(),
-                    "Player": b_match.group(7).strip(), "Receiver": "",
-                    "Action": b_match.group(8).strip(), "StartX": b_match.group(5).strip(),
-                    "StartY": b_match.group(6).strip(), "EndX": "", "EndY": "",
-                })
+            pos_match = re.search(r'Pos\((.+?), (.+?)\)', parts[4])
+            if pos_match: log_dict['StartX'] = pos_match.group(1); log_dict['StartY'] = pos_match.group(2)
 
-        # 5. 추가 정보(No, MatchID, TeamID)를 주입합니다.
+            action_part = parts[5]
+            action_match = re.match(r'(\d+) (.+?)(?: to (\d+))?$', action_part)
+            if action_match:
+                log_dict['Player'] = action_match.group(1)
+                log_dict['Action'] = action_match.group(2)
+                log_dict['Receiver'] = action_match.group(3) if action_match.group(3) else ''
+
+            log_dict['EndX'] = '';
+            log_dict['EndY'] = '';
+            log_dict['Tags'] = ''
+            for part in parts[6:]:
+                if 'Pos' in part:
+                    end_pos_match = re.search(r'Pos\((.+?), (.+?)\)', part)
+                    if end_pos_match: log_dict['EndX'] = end_pos_match.group(1); log_dict['EndY'] = end_pos_match.group(
+                        2)
+                elif 'Tags' in part:
+                    log_dict['Tags'] = part.replace('Tags: ', '')
+
+            parsed_logs.append(log_dict)
+
         match_id, teamid_h, teamid_a = self.get_id_inputs()
         for idx, log in enumerate(parsed_logs, start=1):
-            log["No"] = idx
+            log["No"] = idx;
             log["MatchID"] = match_id
             team_val = str(log.get("Team", "")).strip().lower()
             if team_val == "home":
                 log["TeamID"] = teamid_h
             elif team_val == "away":
                 log["TeamID"] = teamid_a
-            else:
-                log["TeamID"] = ""
 
-        # 6. 파싱된 데이터를 DataFrame으로 만듭니다.
-        columns = [
-            "No", "MatchID", "TeamID", "Half", "Team", "Direction", "Time",
-            "Player", "Receiver", "Action", "StartX", "StartY", "EndX", "EndY"]
+        columns = ["No", "MatchID", "TeamID", "Half", "Team", "Direction", "Time", "Player", "Receiver", "Action",
+                   "StartX", "StartY", "EndX", "EndY", "Tags"]
         df = pd.DataFrame(parsed_logs).reindex(columns=columns)
 
-        # 7. 데이터 분석 함수를 호출합니다.
         df_analyzed = analyze_pass_data(df.copy())
 
-        # 8. 분석이 완료된 DataFrame을 파일로 저장합니다.
         try:
             if file_path.endswith(".xlsx"):
-                # --- ReadMe 시트 데이터 생성 ---
-                readme_data = {
-                    '컬럼명': [
-                        'No', 'MatchID', 'TeamID', 'Half', 'Team', 'Direction', 'Time', 'Player', 'Receiver', 'Action',
-                        'StartX', 'StartY', 'EndX', 'EndY',
-                        'StartX_adj', 'StartY_adj', 'EndX_adj', 'EndY_adj',
-                        'Distance', 'Pass_Distance', 'Angle', 'Pass_Direction'
-                    ],
-                    '설명': [
-                        '이벤트 순번', '경기 고유 ID', '팀 고유 ID', '전반(1st)/후반(2nd)', '팀 구분 (home/away)', '공격 방향 (left/right)',
-                        '이벤트 발생 시간',
-                        '이벤트 주체 선수 등번호', '이벤트 대상 선수 등번호', '이벤트 종류',
-                        '이벤트 시작 X좌표 (m)', '이벤트 시작 Y좌표 (m)', '이벤트 종료 X좌표 (m)', '이벤트 종료 Y좌표 (m)',
-                        '공격 방향을 오른쪽으로 통일한 X좌표', '공격 방향을 오른쪽으로 통일한 Y좌표',
-                        '공격 방향을 오른쪽으로 통일한 종료 X좌표', '공격 방향을 오른쪽으로 통일한 종료 Y좌표',
-                        '패스 거리 (m)', '패스 거리 구분 (short/middle/long)', '패스 각도 (0-360도)',
-                        '패스 방향 구분 (forward/left/right/backward)'
-                    ]
-                }
-                df_readme = pd.DataFrame(readme_data)
-
-                # --- ExcelWriter를 사용하여 여러 시트에 저장 ---
                 with pd.ExcelWriter(file_path, engine='openpyxl') as writer:
-                    df_readme.to_excel(writer, sheet_name='ReadMe', index=False)
-                    df_analyzed.to_excel(writer, sheet_name='Data', index=False)
+                    # 여기에 ReadMe 시트 생성 로직 추가 가능
+                    df_analyzed_with_xg = add_xg_to_data(df_analyzed)
+                    df_pass_summary = create_player_summary(df_analyzed_with_xg)
+                    df_pass_scores = calculate_pass_score(df_pass_summary)
+                    df_shooter_summary = create_shooter_summary(df_analyzed_with_xg)
+                    df_shooter_scores = calculate_shooting_score(df_shooter_summary)
 
-                    # ▼▼▼ 요약 통계 생성 및 새 시트로 저장하는 코드 추가 ▼▼▼
-                    df_summary = create_player_summary(df_analyzed)
-                    if not df_summary.empty:
-                        df_summary.to_excel(writer, sheet_name='Player_Summary')
-
-                        # ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼
-                        # (추가된 부분) 패스 점수 계산 및 새 시트로 저장
-                        df_scores = calculate_pass_score(df_summary)
-                        if not df_scores.empty:
-                            df_scores.to_excel(writer, sheet_name='Player_Score')
-                        # ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
-
-                 # ▼▼▼▼▼▼▼▼▼▼▼▼ (추가된 슈팅 점수 로직) ▼▼▼▼▼▼▼▼▼▼▼▼
-                    # 1. 데이터에 xG 값 추가
-                    df_with_xg = add_xg_to_data(df_analyzed)
-
-                    # 2. 슈팅 데이터 요약
-                    df_shooter_summary = create_shooter_summary(df_with_xg)
-                    if not df_shooter_summary.empty:
-                        df_shooter_summary.to_excel(writer, sheet_name='Shooter_Summary')
-
-                        # 3. 슈팅 점수 계산 및 저장
-                        df_shooting_scores = calculate_shooting_score(df_shooter_summary)
-                        if not df_shooting_scores.empty:
-                                df_shooting_scores.to_excel(writer, sheet_name='Shooting_Score')
-                # ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
-
-
-
-            else:  # CSV 파일은 단일 시트만 지원하므로 기존 방식대로 저장
-                # 사용자가 파일 이름에 .csv를 직접 입력할 경우를 대비
-                if not file_path.endswith('.csv'):
-                    file_path += '.csv'
+                    df_analyzed_with_xg.to_excel(writer, sheet_name='Analyzed_Data', index=False)
+                    if not df_pass_summary.empty: df_pass_summary.to_excel(writer, sheet_name='Player_Summary')
+                    if not df_pass_scores.empty: df_pass_scores.to_excel(writer, sheet_name='Player_Score')
+                    if not df_shooter_summary.empty: df_shooter_summary.to_excel(writer, sheet_name='Shooter_Summary')
+                    if not df_shooter_scores.empty: df_shooter_scores.to_excel(writer, sheet_name='Shooting_Score')
+            else:
+                if not file_path.endswith('.csv'): file_path += '.csv'
                 df_analyzed.to_csv(file_path, index=False, encoding="utf-8-sig")
 
             QMessageBox.information(self, "저장 완료", f"분석된 로그를 성공적으로 저장했습니다:\n{file_path}")
         except Exception as e:
             QMessageBox.critical(self, "저장 실패", f"파일 저장 중 오류 발생:\n{str(e)}")
 
-
+    # 기존 submit_stat 함수를 이 코드로 전체 교체
     def submit_stat(self):
         time = self.lineEdit_timeline.text().strip()
-        stat_input = self.lineEdit_datainput.text().strip()
+        stat_input = self.lineEdit_datainput.text().strip().lower()
 
-        # ✅ timeline이 비어있을 때만 시스템 시간 채우기
-        if not time:
-            time = QTime.currentTime().toString("HH:mm:ss")
-            self.lineEdit_timeline.setText(time)
+        if not time: time = QTime.currentTime().toString("HH:mm:ss"); self.lineEdit_timeline.setText(time)
+        if not stat_input: QMessageBox.warning(self, "입력 누락", "데이터를 입력해주세요."); return
 
-        if not stat_input:
-            QMessageBox.warning(self, "입력 누락", "스탯 입력(등번호, 코드 등)을 작성해주세요.")
-            return
+        try:
+            match_info = self.get_match_info()
+            half = "1st" if match_info["Half"] == "1st Half" else "2nd"
+            team = match_info["Team"].lower();
+            direction = match_info["Direction"].lower()
 
-        match_info = self.get_match_info()  # ✅ Half / Team / Direction 가져오기
-        half = "1st" if match_info["Half"] == "1st Half" else "2nd"
-        team = match_info["Team"].lower()  # "Home" → "home"
-        direction = match_info["Direction"].lower()
+            # 1. '.'을 기준으로 기본 액션과 태그 분리
+            parts = stat_input.split('.', 1)
+            base_action_part = parts[0]
+            tag_codes = parts[1].split('.') if len(parts) > 1 else []
 
-        # 스탯 사전
-        actions_A = {
-            'zz': 'Assist',
-            'cc': 'Cross Success',
-            'ss': 'Pass Success',
-            'z': 'Key Pass',
-            'c': 'Cross Fail',
-            's': 'Pass Fail',
-        }
+            # 2. 기본 액션 파싱 (정규식 사용)
+            match = re.match(r"(\d+)([a-z]+)(\d*)", base_action_part)
+            if not match:
+                raise ValueError("기본 입력 형식이 올바르지 않습니다 (예: 10ss8 또는 7d).")
 
-        actions_B = {
-            'ddd': 'Goal',
-            'dd': 'Shot On Target',
-            'd': 'Shot',
-            'db': 'Blocked Shot',
-            'ee': 'Breakthrough',
-            'rr': 'Dribble',
-            'bb': 'Duel Win',
-            'b': 'Duel Lose',
-            'aa': 'Tackle',
-            'q': 'Intercept',
-            'qq': 'Acquisition',
-            'w': 'Clear',
-            'ww': 'Cutout',
-            'qw': 'Block',
-            'v': 'Catching',
-            'vv': 'Punching',
-            'f': 'Foul',
-            'ff': 'Be Fouled',
-            'o': 'Offside',
-            'gp': 'Gain',
-            'm': 'Miss'
-        }
+            player_from = int(match.group(1))
+            action_code = match.group(2)
+            player_to = int(match.group(3)) if match.group(3) else ''
 
+            # 3. 액션 이름 및 성공/실패 태그 결정
+            action_name = '';
+            tags_list = []
+            # 슈팅 예외 규칙
+            if action_code in ['d', 'dd', 'ddd', 'db']:
+                action_name = self.ACTION_CODES[action_code]
+                tags_list.append('Success' if action_code in ['dd', 'ddd'] else 'Fail')
+            # 성공/실패 반복 규칙
+            elif len(action_code) > 0:
+                base_code = action_code[0]
+                if base_code in self.ACTION_CODES:
+                    action_name = self.ACTION_CODES[base_code]
+                    tags_list.append('Success' if len(action_code) > 1 and action_code[0] == action_code[1] else 'Fail')
 
-        all_actions = {**actions_A, **actions_B}
+            if not action_name: raise ValueError(f"'{action_code}'는 알 수 없는 액션 코드입니다.")
 
-        for key in sorted(all_actions.keys(), key=len, reverse=True):
-            match = re.fullmatch(rf"(\d+){key}(\d*)", stat_input)
-            if match:
-                action = all_actions[key]
+            # 4. 추가 태그 변환
+            for tc in tag_codes:
+                if tc in self.TAG_CODES: tags_list.append(self.TAG_CODES[tc])
 
-                if key in actions_A:  # A타입
-                    if not match.group(2):
-                        QMessageBox.warning(self, "입력 오류", "A타입 스탯은 '플레이어번호 + 코드 + 플레이어번호' 형식이어야 합니다.")
-                        return
-                    try:
-                        player_from = int(match.group(1))
-                        player_to = int(match.group(2))
-                    except ValueError:
-                        QMessageBox.warning(self, "입력 오류", "선수 번호는 숫자여야 합니다.")
-                        return
+            # 5. 로그 생성
+            log_tags_str = f" | Tags: {', '.join(tags_list)}"
 
-                    if len(self.dot_items) < 2:
-                        QMessageBox.warning(self, "위치 부족", "A타입 스탯은 두 개의 위치(도트)가 필요합니다.")
-                        return
+            if not self.dot_items: raise ValueError("위치를 먼저 클릭해주세요.")
 
-                    start_dot = self.dot_items[-2].rect().center()
-                    end_dot = self.dot_items[-1].rect().center()
+            if player_to:  # 두 선수 액션
+                if len(self.dot_items) < 2: raise ValueError("두 개의 위치가 필요합니다.")
+                start_dot, end_dot = self.dot_items[-2].rect().center(), self.dot_items[-1].rect().center()
+                start_x = round(start_dot.x() * self.FIELD_WIDTH / self.PIXEL_WIDTH, 2)
+                start_y = round((self.PIXEL_HEIGHT - start_dot.y()) * self.FIELD_HEIGHT / self.PIXEL_HEIGHT, 2)
+                end_x = round(end_dot.x() * self.FIELD_WIDTH / self.PIXEL_WIDTH, 2)
+                end_y = round((self.PIXEL_HEIGHT - end_dot.y()) * self.FIELD_HEIGHT / self.PIXEL_HEIGHT, 2)
+                log_text = f"{half} | {team} | {direction} | {time} | Pos({start_x}, {start_y}) | {player_from} {action_name} to {player_to} | Pos({end_x}, {end_y})"
+            else:  # 한 선수 액션
+                start_dot = self.dot_items[-1].rect().center()
+                start_x = round(start_dot.x() * self.FIELD_WIDTH / self.PIXEL_WIDTH, 2)
+                start_y = round((self.PIXEL_HEIGHT - start_dot.y()) * self.FIELD_HEIGHT / self.PIXEL_HEIGHT, 2)
+                log_text = f"{half} | {team} | {direction} | {time} | Pos({start_x}, {start_y}) | {player_from} {action_name}"
 
-                    start_x = round(start_dot.x() * self.FIELD_WIDTH / self.PIXEL_WIDTH, 2)
-                    start_y = round((self.PIXEL_HEIGHT - start_dot.y()) * self.FIELD_HEIGHT / self.PIXEL_HEIGHT, 2)
-                    end_x = round(end_dot.x() * self.FIELD_WIDTH / self.PIXEL_WIDTH, 2)
-                    end_y = round((self.PIXEL_HEIGHT - end_dot.y()) * self.FIELD_HEIGHT / self.PIXEL_HEIGHT, 2)
+            self.listWidget.addItem(log_text + log_tags_str)
 
-                    log_text = f"{half} | {team} | {direction} | {time} | Pos({start_x}, {start_y}) | {player_from} {action} to {player_to} | Pos({end_x}, {end_y})"
+            # 6. 마무리
+            for dot in self.dot_items: self.scene.removeItem(dot)
+            self.dot_items.clear()
+            self.lineEdit_datainput.clear();
+            self.lineEdit_position.clear()
 
-                else:  # B타입
-                    try:
-                        player_from = int(match.group(1))
-                    except ValueError:
-                        QMessageBox.warning(self, "입력 오류", "선수 번호는 숫자여야 합니다.")
-                        return
+        except Exception as e:
+            QMessageBox.warning(self, "입력 오류", f"입력 규칙을 확인해주세요.\n오류: {str(e)}")
 
-                    if not self.dot_items:
-                        QMessageBox.warning(self, "위치 누락", "필드에서 위치를 먼저 클릭해주세요.")
-                        return
-
-                    dot = self.dot_items[-1].rect().center()
-                    x = round(dot.x() * self.FIELD_WIDTH / self.PIXEL_WIDTH, 2)
-                    y = round((self.PIXEL_HEIGHT - dot.y()) * self.FIELD_HEIGHT / self.PIXEL_HEIGHT, 2)
-
-                    log_text = f"{half} | {team} | {direction} | {time} | Pos({x}, {y}) | {player_from} {action} to N/A"
-
-                # ✅ 로그 추가
-                self.listWidget.addItem(log_text)
-                for dot in self.dot_items:
-                    self.scene.removeItem(dot)
-                self.dot_items.clear()
-
-                self.lineEdit_datainput.clear()
-                self.lineEdit_position.clear()
-                return
-
-        # ❌ 매칭 실패 시
-        QMessageBox.warning(self, "알 수 없는 스탯", "유효한 액션 코드가 아닙니다.")
 
     def showEvent(self, event):
         super().showEvent(event)
